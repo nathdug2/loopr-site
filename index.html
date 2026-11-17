@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LOOPR | Pièces uniques cousues à partir de vêtements existants</title>
+  <meta name="description" content="Chaque semaine, un drop de pièces uniques refaites à partir de vêtements existants. Une pièce, un exemplaire.">
+  <meta name="theme-color" content="#1b2459">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="home">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <h1 class="display">Drop 14</h1>
+            <p class="lead">12 pièces cousues à partir de vêtements existants. Chacune n’existe qu’une fois.</p>
+            <div class="hero-actions">
+              <a class="btn" href="#pieces">Voir les pièces</a>
+              <a class="btn btn--ghost" href="club.html">Entrer 24 h avant</a>
+            </div>
+          </div>
+          <div class="countdown-box">
+            <p class="countdown-label">Le drop 15 ouvre dans</p>
+            <div class="countdown" data-cd="public" data-cd-cells role="timer" aria-label="Compte à rebours avant le drop 15">
+              <div class="cd-cell"><span class="cd-num">00</span><span class="cd-unit">jours</span></div>
+              <div class="cd-cell"><span class="cd-num">00</span><span class="cd-unit">heures</span></div>
+              <div class="cd-cell"><span class="cd-num">00</span><span class="cd-unit">minutes</span></div>
+              <div class="cd-cell"><span class="cd-num">00</span><span class="cd-unit">secondes</span></div>
+            </div>
+            <p class="countdown-note">Les membres Loop entrent jeudi à 19 h, le public vendredi à 19 h.</p>
+          </div>
+        </div>
+
+        <div class="slots">
+          <p class="slots-title" id="slot-title">7 pièces disponibles sur 12</p>
+          <div class="slot-row" id="slot-row"></div>
+          <div class="slot-legend" aria-hidden="true">
+            <span><i></i>Disponible</span>
+            <span><i class="l-res"></i>Réservée ou dans un panier</span>
+            <span><i class="l-sold"></i>Vendue</span>
+            <span><i class="l-tt"></i>En live TikTok</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="shelf" id="pieces" aria-labelledby="pieces-title">
+      <div class="wrap">
+        <div class="shelf-head">
+          <h2 class="h2" id="pieces-title">Les pièces du drop 14</h2>
+          <div class="chips" id="chips" role="group" aria-label="Filtrer les pièces"></div>
+        </div>
+        <ul class="grid" id="grid"></ul>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="how-title">
+      <div class="wrap">
+        <h2 class="h2" id="how-title">Une pièce, une personne</h2>
+        <ol class="how-grid">
+          <li class="step">
+            <span class="step-n">1</span>
+            <div><h3>Choisis ta pièce</h3><p>Elle n’existe qu’en un exemplaire. Si elle est disponible, elle peut être à toi.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-n">2</span>
+            <div><h3>On la garde 10 minutes</h3><p>Dès que tu la réserves, personne d’autre ne peut la prendre pendant 10 minutes.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-n">3</span>
+            <div><h3>Tu paies en invité</h3><p>Aucun compte à créer. Apple Pay, Shop Pay ou Klarna, en deux clics.</p></div>
+          </li>
+        </ol>
+        <p class="passport-note">Chaque pièce arrive avec son passeport : les vêtements dont elle vient, les heures d’atelier et les matières.</p>
+      </div>
+    </section>
+
+    <section class="band live" aria-labelledby="live-title">
+      <div class="wrap">
+        <div class="live-grid">
+          <div>
+            <h2 class="h2" id="live-title">Les lives passent d’abord</h2>
+          </div>
+          <div>
+            <p class="lead">Les pièces présentées en live TikTok restent 72 heures réservées aux spectateurs. Ensuite, elles arrivent ici.</p>
+            <p style="margin-top:.75rem">Cette semaine : <a class="link" id="tiktok-piece" href="piece.html?p=8">la pièce n° 8</a>, sur le site dans 41 h.</p>
+            <p style="margin-top:1.25rem"><a class="btn" href="#" data-soon>Suivre LOOPR sur TikTok</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band next-drop" aria-labelledby="next-title">
+      <div class="wrap">
+        <div class="next-grid">
+          <div>
+            <h2 class="h2" id="next-title">Drop 15 : les membres Loop passent en premier</h2>
+            <p class="lead" style="margin-top:1rem">Ils ouvrent 24 heures avant tout le monde, sur une pièce sur cinq. Entrée dans <b data-cd="member">0 j</b>.</p>
+            <p style="margin-top:1.25rem"><a class="btn btn--indigo" href="club.html">Rejoindre le LOOP Club</a></p>
+          </div>
+          <div class="blurs" id="blurs" aria-label="Aperçu flouté de trois pièces du prochain drop"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band popup-teaser" aria-labelledby="popup-title">
+      <div class="wrap">
+        <div class="popup-card">
+          <div>
+            <h2 class="h2" id="popup-title">Prochain pop-up</h2>
+            <p class="lead" style="margin-top:1rem">Essaie les pièces en vrai. Réserve en ligne, retire sur place.</p>
+            <p style="margin-top:1.25rem"><a class="btn" href="popup.html">Voir les dates</a></p>
+          </div>
+          <div>
+            <p class="display city-big" id="popup-city">Lyon</p>
+            <p style="margin-top:.5rem;font-weight:600" id="popup-dates">3 au 6 décembre 2026</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

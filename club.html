@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LOOP Club | LOOPR</title>
+  <meta name="description" content="Le LOOP Club : accès anticipé aux drops, alertes à ta taille et avantages pour les clients fidèles.">
+  <meta name="theme-color" content="#1b2459">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="club">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="club-hero">
+      <div class="wrap">
+        <h1 class="display">Plus tu achètes, plus tu passes tôt</h1>
+        <p class="lead" style="margin-top:1.25rem">Le LOOP Club te laisse entrer avant tout le monde sur les pièces uniques. Trois niveaux, aucun frais d’inscription.</p>
+        <p style="margin-top:1.25rem"><a class="btn" href="#rejoindre">Rejoindre le club</a></p>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="band">
+      <div class="wrap">
+        <div class="tiers">
+          <div class="tier">
+            <div>
+              <h2 class="tier-name">Seed</h2>
+              <p class="tier-how">Dès l’inscription, gratuit</p>
+            </div>
+            <ul>
+              <li>Alertes quand une pièce arrive dans ta taille</li>
+              <li>Envies gardées de côté d’une visite à l’autre</li>
+              <li>Prévenu(e) avant chaque live TikTok</li>
+            </ul>
+          </div>
+          <div class="tier">
+            <div>
+              <h2 class="tier-name">Loop</h2>
+              <p class="tier-how">Dès ton premier achat</p>
+            </div>
+            <ul>
+              <li>Accès anticipé 24 heures avant l’ouverture publique, sur une pièce sur cinq</li>
+              <li>Passeports de toutes tes pièces, réunis au même endroit</li>
+              <li>Invitation aux pop-up près de chez toi</li>
+            </ul>
+          </div>
+          <div class="tier">
+            <div>
+              <h2 class="tier-name">Collector</h2>
+              <p class="tier-how">Dès 3 pièces achetées</p>
+            </div>
+            <ul>
+              <li>Livraison offerte, sans minimum d’achat</li>
+              <li>Créneau d’essayage prioritaire dans chaque pop-up</li>
+              <li>Accès anticipé et alerte une heure avant chaque live</li>
+            </ul>
+          </div>
+        </div>
+        <p class="muted" style="margin-top:1rem">Seuils et avantages d’exemple pour la maquette.</p>
+      </div>
+    </section>
+
+    <section class="join" id="rejoindre" aria-labelledby="join-title">
+      <div class="wrap">
+        <div class="join-box">
+          <h2 class="h2" id="join-title">Entre dans le club</h2>
+          <p class="lead" style="margin-top:1rem">Ton adresse e-mail suffit. Tu deviens Seed tout de suite, puis Loop à ton premier achat.</p>
+          <form class="form-row" data-toast="Bienvenue chez les Seed. Tu recevras l’alerte du prochain drop.">
+            <label class="sr-only" for="club-mail">Adresse e-mail</label>
+            <input class="input" id="club-mail" type="email" required placeholder="ton@email.fr" autocomplete="email">
+            <button class="btn" type="submit">Rejoindre</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

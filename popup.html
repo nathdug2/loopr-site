@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pop-up | LOOPR</title>
+  <meta name="description" content="Les prochains pop-up LOOPR : essaie les pièces en vrai, réserve en ligne et retire sur place.">
+  <meta name="theme-color" content="#1b2459">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="popup">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="popup-hero">
+      <div class="wrap popup-hero-grid">
+        <div>
+          <p style="font-weight:600">Prochain pop-up</p>
+          <h1 class="display city-big" style="font-size:clamp(5rem,26vw,13rem)">Lyon</h1>
+          <dl class="facts">
+            <div><dt>Dates</dt><dd>3 au 6 décembre 2026</dd></div>
+            <div><dt>Horaires</dt><dd>11 h à 19 h, tous les jours</dd></div>
+            <div><dt>Adresse</dt><dd>Envoyée par e-mail aux personnes inscrites</dd></div>
+            <div><dt>Paiement</dt><dd>Carte, Apple Pay ou espèces sur place</dd></div>
+          </dl>
+        </div>
+        <div class="panel-form">
+          <h2>Réserve ton créneau d’essayage</h2>
+          <p class="muted" style="margin-top:.35rem">Gratuit, 20 minutes, sans obligation d’acheter.</p>
+          <form data-toast="Créneau noté. Une confirmation arrive par e-mail.">
+            <label class="field-label" for="pp-slot">Créneau</label>
+            <select class="select" id="pp-slot" required>
+              <option value="">Choisir un créneau</option>
+              <option>Jeudi 3 décembre, 11 h à 13 h</option>
+              <option>Jeudi 3 décembre, 15 h à 19 h</option>
+              <option>Vendredi 4 décembre, 11 h à 13 h</option>
+              <option>Samedi 5 décembre, 11 h à 15 h</option>
+              <option>Dimanche 6 décembre, 11 h à 19 h</option>
+            </select>
+            <label class="field-label" for="pp-mail">Adresse e-mail</label>
+            <input class="input" style="width:100%;margin-top:.35rem" id="pp-mail" type="email" required placeholder="ton@email.fr" autocomplete="email">
+            <button class="btn btn--block" style="margin-top:1rem" type="submit">Réserver mon créneau</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="band">
+      <div class="wrap">
+        <h2 class="h2">Réserve en ligne, retire sur place</h2>
+        <ol class="steps-inline how-grid" style="margin-top:1.5rem">
+          <li class="step"><span class="step-n">1</span><div><h3>Réserve sur le site</h3><p>Ta pièce est gardée 10 minutes, le temps de payer.</p></div></li>
+          <li class="step"><span class="step-n">2</span><div><h3>Choisis le retrait</h3><p>Sans frais de livraison, au stand pendant les dates du pop-up.</p></div></li>
+          <li class="step"><span class="step-n">3</span><div><h3>Essaie sur place</h3><p>Ajuste, compare avec les autres pièces, puis repars avec la tienne.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="shelf" aria-labelledby="pp-pieces">
+      <div class="wrap">
+        <div class="shelf-head">
+          <h2 class="h2" id="pp-pieces">Sur le stand à Lyon</h2>
+          <p style="max-width:34ch">Les pièces du drop encore disponibles. Une pièce vendue en ligne n’est pas exposée.</p>
+        </div>
+        <ul class="grid" id="popup-pieces"></ul>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="wrap">
+        <h2 class="h2">Les prochaines villes</h2>
+        <ul class="cal" id="cal"></ul>
+        <p class="muted" style="margin-top:1rem">Dates d’exemple pour la maquette.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
