@@ -18,58 +18,160 @@
     <section class="club-hero">
       <div class="wrap">
         <h1 class="display">Plus tu achètes, plus tu passes tôt</h1>
-        <p class="lead" style="margin-top:1.25rem">Le LOOP Club te laisse entrer avant tout le monde sur les pièces uniques. Trois niveaux, aucun frais d’inscription.</p>
-        <p style="margin-top:1.25rem"><a class="btn" href="#rejoindre">Rejoindre le club</a></p>
+        <p class="lead" style="margin-top:1.25rem">Le LOOP Club te laisse entrer avant tout le monde sur les pièces uniques. Trois niveaux, aucun frais d’inscription. Ici, on récompense la rareté, pas la remise.</p>
+        <div id="club-status" style="margin-top:1.5rem;max-width:560px"></div>
+        <p class="club-cta"><a class="btn" href="#rejoindre">Rejoindre le club</a><a class="btn btn--ghost" href="#niveau">Voir où j’en suis</a></p>
       </div>
     </section>
 
     <div class="stitch"></div>
 
-    <section class="band">
+    <section class="band" aria-labelledby="tiers-title">
       <div class="wrap">
+        <h2 class="h2" id="tiers-title">Trois niveaux</h2>
         <div class="tiers">
           <div class="tier">
             <div>
-              <h2 class="tier-name">Seed</h2>
+              <h3 class="tier-name">Seed</h3>
               <p class="tier-how">Dès l’inscription, gratuit</p>
+              <p class="tier-note">Pour ceux qui découvrent LOOPR.</p>
             </div>
             <ul>
-              <li>Alertes quand une pièce arrive dans ta taille</li>
+              <li>Alerte une heure avant chaque drop et chaque live</li>
+              <li>Alerte quand une pièce arrive dans ta taille</li>
+              <li>Code de bienvenue et lookbook du drop</li>
               <li>Envies gardées de côté d’une visite à l’autre</li>
-              <li>Prévenu(e) avant chaque live TikTok</li>
             </ul>
           </div>
           <div class="tier">
             <div>
-              <h2 class="tier-name">Loop</h2>
+              <h3 class="tier-name">Loop</h3>
               <p class="tier-how">Dès ton premier achat</p>
+              <p class="tier-note">Pour ceux qui ont leur première pièce.</p>
             </div>
             <ul>
-              <li>Accès anticipé 24 heures avant l’ouverture publique, sur une pièce sur cinq</li>
+              <li>Accès anticipé de 24 heures avant l’ouverture publique, sur une pièce sur cinq</li>
+              <li>Points d’achat à chaque pièce</li>
+              <li>Parrainage d’un(e) ami(e)</li>
               <li>Passeports de toutes tes pièces, réunis au même endroit</li>
-              <li>Invitation aux pop-up près de chez toi</li>
             </ul>
           </div>
           <div class="tier">
             <div>
-              <h2 class="tier-name">Collector</h2>
-              <p class="tier-how">Dès 3 pièces achetées</p>
+              <h3 class="tier-name">Collector</h3>
+              <p class="tier-how">Dès 3 pièces, ou 250&nbsp;€ d’achats</p>
+              <p class="tier-note">Pour ceux qui reviennent.</p>
             </div>
             <ul>
+              <li>Pièces VIP, réservées aux Collector</li>
+              <li>Reprise bonifiée de 15&nbsp;% quand tu rapportes une pièce</li>
+              <li>Invitation prioritaire aux pop-ups</li>
               <li>Livraison offerte, sans minimum d’achat</li>
-              <li>Créneau d’essayage prioritaire dans chaque pop-up</li>
-              <li>Accès anticipé et alerte une heure avant chaque live</li>
             </ul>
           </div>
         </div>
-        <p class="muted" style="margin-top:1rem">Seuils et avantages d’exemple pour la maquette.</p>
+        <p class="muted" style="margin-top:1rem">Seuils et avantages issus du dossier de groupe, présentés ici en maquette.</p>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="band sim" id="niveau" aria-labelledby="sim-title">
+      <div class="wrap">
+        <h2 class="h2" id="sim-title">Où en es-tu ?</h2>
+        <p class="lead" style="margin-top:0.75rem">Ajoute des achats pour voir ton niveau changer. Une pièce est comptée à 85&nbsp;€, le panier moyen visé.</p>
+        <div class="sim-box" id="club-sim" aria-live="polite">
+          <div class="sim-top">
+            <div class="sim-level"><span class="sim-lbl">Ton niveau</span><b id="sim-level">Seed</b></div>
+            <div class="sim-count"><span class="sim-lbl">Pièces achetées</span><b id="sim-n">0</b><span class="sim-eur" id="sim-eur">0&nbsp;€</span></div>
+          </div>
+          <div class="sim-track" aria-hidden="true"><i id="sim-fill"></i><span class="m1">Loop</span><span class="m3">Collector</span></div>
+          <p class="sim-next" id="sim-next"></p>
+          <ul class="sim-perks" id="sim-perks"></ul>
+          <div class="sim-btns">
+            <button class="btn btn--indigo" type="button" data-sim="add">Acheter une pièce</button>
+            <button class="btn btn--ghost" type="button" data-sim="sub">En retirer une</button>
+            <button class="btn btn--ghost" type="button" data-sim="reset">Remettre à zéro</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="band" aria-labelledby="after-title">
+      <div class="wrap">
+        <h2 class="h2" id="after-title">Ce que tu reçois, et quand</h2>
+        <p class="lead" style="margin-top:0.75rem">Cinq messages automatiques accompagnent chaque membre, de l’inscription au deuxième achat.</p>
+        <ol class="how-grid club-steps">
+          <li class="step">
+            <span class="step-n">1</span>
+            <div><h3>À l’inscription</h3><p>E-mail de bienvenue avec ton code et le lookbook du drop en cours.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-n">2</span>
+            <div><h3>Si tu quittes ton panier</h3><p>Un SMS te rappelle que la pièce est unique et qu’elle peut partir.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-n">3</span>
+            <div><h3>Une heure avant un drop ou un live</h3><p>Une alerte te prévient. Les membres Loop entrent 24 heures plus tôt sur une pièce sur cinq.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-n">4</span>
+            <div><h3>Après ton achat</h3><p>Un e-mail te montre ce que ta pièce a évité et te propose d’envoyer une photo de toi avec.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-n">5</span>
+            <div><h3>Trois mois plus tard</h3><p>Une relance te présente le prochain drop avant tout le monde, avec ta pièce en souvenir.</p></div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="band" aria-labelledby="more-title">
+      <div class="wrap">
+        <h2 class="h2" id="more-title">Plus qu’un programme de points</h2>
+        <div class="club-cards">
+          <article class="club-card">
+            <h3>Rapporter une pièce</h3>
+            <p>Tu n’en veux plus ? Rapporte un vêtement en pop-up ou par colis et reçois un crédit d’achat. Les Collector gagnent 15&nbsp;% de plus. La pièce rapportée nourrit l’atelier.</p>
+            <span class="club-tag">Test prévu aux mois 5 et 6</span>
+          </article>
+          <article class="club-card">
+            <h3>La communauté</h3>
+            <p>Les photos des membres avec leur pièce, leurs looks, des lives de questions-réponses avec l’atelier et des coulisses réservées au club.</p>
+            <span class="club-tag">Avis photo dès le premier achat</span>
+          </article>
+          <article class="club-card">
+            <h3>Les pop-ups</h3>
+            <p>Les membres sont prévenus quand le pop-up passe dans leur ville. Les Collector ont un créneau d’essayage prioritaire, et chacun peut réserver en ligne puis venir retirer sa pièce.</p>
+            <span class="club-tag">Le site rejoint le magasin</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="stitch"></div>
+
+    <section class="band goals" aria-labelledby="goals-title">
+      <div class="wrap">
+        <h2 class="h2" id="goals-title">Ce que LOOPR en attend</h2>
+        <p class="lead" style="margin-top:0.75rem">Le club sert à faire revenir les clients sans baisser les prix, et à connaître ceux qui achètent. Objectifs au mois 6, tirés du dossier de groupe.</p>
+        <dl class="goal-grid">
+          <div><dt>Membres Loop ou Collector</dt><dd>450 ou plus</dd></div>
+          <div><dt>Réachat à 90 jours</dt><dd>12&nbsp;% ou plus</dd><dd class="goal-sub">Alerte sous 7&nbsp;%</dd></div>
+          <div><dt>Valeur d’un client à 12 mois</dt><dd>110&nbsp;€ ou plus</dd><dd class="goal-sub">Environ 4 fois le coût d’acquisition</dd></div>
+          <div><dt>Budget du club</dt><dd>15&nbsp;000&nbsp;€</dd><dd class="goal-sub">Sur l’enveloppe de 400&nbsp;k€</dd></div>
+        </dl>
+        <p class="muted" style="margin-top:1rem">Le réachat ne repaie ni plateforme ni publicité : c’est lui qui rend le site rentable à 12 mois.</p>
       </div>
     </section>
 
     <section class="join" id="rejoindre" aria-labelledby="join-title">
       <div class="wrap">
         <div class="join-box">
-          <div id="club-status"></div>
           <h2 class="h2" id="join-title">Entre dans le club</h2>
           <p class="lead" style="margin-top:1rem">Ton adresse e-mail suffit. Tu deviens Seed tout de suite, puis Loop à ton premier achat.</p>
           <form class="form-row" data-toast="Bienvenue chez les Seed. Tu recevras l’alerte du prochain drop.">
@@ -86,5 +188,6 @@
   <script src="assets/data.js"></script>
   <script src="assets/app.js"></script>
   <script src="assets/order.js"></script>
+  <script src="assets/club.js"></script>
 </body>
 </html>
