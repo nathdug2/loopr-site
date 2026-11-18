@@ -168,13 +168,10 @@ ul, ol { padding: 0; list-style: none; }
 .slot[data-state="reservee"] { background: var(--amber); }
 .slot[data-state="vendue"] { background: transparent; border-style: dashed; color: rgba(27, 36, 89, 0.5); border-color: rgba(27, 36, 89, 0.4); }
 .slot[data-state="vendue"] span { text-decoration: line-through; text-decoration-thickness: 2px; }
-.slot[data-state="tiktok"] { background: var(--indigo); color: var(--label); }
-.slot[data-state="tiktok"]::before { background: var(--indigo); border-color: var(--label); }
 .slot-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 0.75rem; font-size: 0.875rem; }
 .slot-legend i { display: inline-block; width: 0.9rem; height: 0.9rem; border: 2px solid var(--indigo); border-radius: 2px; vertical-align: -2px; margin-right: 0.35rem; background: var(--label); }
 .slot-legend .l-res { background: var(--amber); }
 .slot-legend .l-sold { border-style: dashed; background: transparent; }
-.slot-legend .l-tt { background: var(--indigo); }
 
 /* ---------- Étagère de pièces ---------- */
 .shelf { padding-block: 3rem 3.5rem; background: var(--wash); }
@@ -208,7 +205,6 @@ ul, ol { padding: 0; list-style: none; }
 }
 .tag-badge[data-state="reservee"] { background: var(--amber); }
 .tag-badge[data-state="vendue"] { background: var(--indigo); color: var(--label); }
-.tag-badge[data-state="tiktok"] { background: var(--indigo); color: var(--label); }
 .tag-badge[data-state="panier"] { background: var(--amber); }
 .tag-info { padding: 0.75rem 0.875rem 0.5rem; border-top: 2px dashed var(--amber); position: relative; }
 .tag-num { font-family: var(--display); font-weight: 800; font-stretch: 75%; font-size: 1.75rem; line-height: 1; }
@@ -297,7 +293,7 @@ ul, ol { padding: 0; list-style: none; }
 .status-box { margin-top: 1.25rem; padding: 0.875rem 1rem; border: 2px solid var(--indigo); border-radius: 4px; background: var(--label); font-weight: 600; }
 .status-box[data-state="dispo"] { background: #d9ecd9; }
 .status-box[data-state="panier"] { background: var(--amber-pale); }
-.status-box[data-state="reservee"], .status-box[data-state="tiktok"] { background: var(--amber-pale); }
+.status-box[data-state="reservee"] { background: var(--amber-pale); }
 .status-box[data-state="vendue"] { background: var(--wash); }
 .status-box .timer { font-family: var(--display); font-weight: 800; font-size: 1.5rem; font-variant-numeric: tabular-nums; margin-left: 0.5rem; }
 .buy-actions { display: grid; gap: 0.75rem; margin-top: 1rem; }
@@ -440,3 +436,5 @@ dialog .btn { margin-top: 1.25rem; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+.live .btn--ghost { color: var(--label); }

@@ -130,8 +130,7 @@
   function reserve(n) {
     var p = byN(n);
     if (!p || inCart(n) || isSold(n)) return;
-    /* Une pièce « tiktok » est réservée aux spectateurs : elle ne se réserve que depuis la page du live. */
-    if (p.status !== "dispo" && !(p.status === "tiktok" && window.LOOPR_LIVE_ON)) return;
+    if (p.status !== "dispo") return;
     var c = readCart();
     c.push({ n: n, until: Date.now() + HOLD_MS });
     store.set(CART_KEY, c);
@@ -170,7 +169,7 @@
   }
 
   /* ---------- Cartes de pièces ---------- */
-  var BADGE = { dispo: "Disponible", reservee: "Réservée", vendue: "Vendue", tiktok: "Live TikTok", panier: "Dans ton panier" };
+  var BADGE = { dispo: "Disponible", reservee: "Réservée", vendue: "Vendue", panier: "Dans ton panier" };
   var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-8-4.9-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.7-8 10.6-8 10.6z" fill="none" stroke="#1b2459" stroke-width="2" stroke-linejoin="round"/></svg>';
 
   function cardActions(p, st) {
@@ -386,9 +385,6 @@
     if (blur) blur.innerHTML = D.nextPieces.map(function (p) {
       return '<div class="blur-tile">' + garment(p.type, p.fabric, "n" + p.n, "Pièce du prochain drop, floutée") + "</div>";
     }).join("");
-    var tt = D.pieces.filter(function (p) { return p.status === "tiktok"; })[0];
-    var link = $("#tiktok-piece");
-    if (tt && link) { link.href = "piece.html?p=" + tt.n; link.textContent = "la pièce n°" + NB + tt.n; }
     var pop = D.popups[0];
     var pc = $("#popup-city");
     if (pc) { pc.textContent = pop.city; $("#popup-dates").textContent = pop.dates; }
@@ -400,8 +396,7 @@
       dispo: "Disponible. Elle n’existe qu’en un exemplaire.",
       panier: "Dans ton panier. Il te reste",
       reservee: "Réservée par un autre client. Elle peut se libérer dans quelques minutes.",
-      vendue: "Vendue. Chaque pièce n’existe qu’une fois.",
-      tiktok: "En exclusivité sur le live TikTok. Sur le site dans 41" + NB + "h."
+      vendue: "Vendue. Chaque pièce n’existe qu’une fois."
     };
     var timer = st === "panier" ? '<span class="timer" data-hold="' + p.n + '">' + mmss(holdOf(p.n) - Date.now()) + "</span>" : "";
     var main;

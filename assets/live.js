@@ -1,15 +1,16 @@
-/* LOOPR — page Live. Tout est simulé (chat, spectateurs, cœurs) sauf la réservation de la pièce n° 08, qui passe par le vrai panier du site. */
+/* LOOPR — page Live. Tout est simulé (chat, spectateurs, cœurs). Le live présente la nouvelle collection : rien ne s'y commande, chaque pièce renvoie vers le site. */
 (function () {
   "use strict";
   var A = window.LOOPR_APP;
   var root = document.getElementById("live-root");
   if (!A || !root) return;
-  window.LOOPR_LIVE_ON = true; /* autorise la réservation d'une pièce « tiktok » depuis cette page */
 
-  var N = 8;
+  var D = window.LOOPR;
+  var SHOW = [8, 1, 11, 7, 4];   /* pièces présentées, dans l'ordre de passage */
+  var cur = 0;
+  var N = SHOW[0];
   var P = A.byN(N);
   var NB = " ";
-  var NUM = "n°" + NB + A.pad(N);
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function rand(a, b) { return a + Math.random() * (b - a); }
@@ -61,7 +62,7 @@
       '<div class="lv-sign"><i></i>LOOPR</div>' +
       '<div class="lv-rail"><span class="bar"></span>' + railGarment(8, "jacket", "denim") + railGarment(86, "dress", "check") + railGarment(246, "vest", "denim") + railGarment(292, "shirt", "stripe") + "</div>" +
       '<div class="lv-host">' + HOST + "</div>" +
-      '<div class="lv-garment">' + A.pieceArt(P, "live") + "</div>" +
+      '<div class="lv-garment" id="lv-garment">' + A.pieceArt(P, "live") + "</div>" +
       '<div class="lv-grain"></div><div class="lv-shade-t"></div><div class="lv-shade-b"></div>' +
     "</div>" +
     '<div class="lv-top">' +
@@ -70,22 +71,22 @@
       '<div class="lv-right"><div class="lv-viewers"><span class="lv-faces"><i style="background:#f7e2b0"></i><i style="background:#c3cee4"></i><i style="background:#f1cdc7"></i></span><span id="lv-viewers">1,2' + NB + 'k</span></div>' +
       '<button class="lv-x" type="button" data-leave aria-label="Quitter le live">' + ICON.x + "</button></div>" +
     "</div>" +
-    '<div class="lv-tags"><span class="lv-live">LIVE</span><span class="lv-tag">Drop 14 · pièce ' + NUM + "</span></div>" +
+    '<div class="lv-tags"><span class="lv-live">LIVE</span><span class="lv-tag">Nouvelle collection · drop 14</span></div>' +
     '<div class="lv-gifts" id="lv-gifts"></div>' +
     '<div class="lv-cap" id="lv-cap" aria-hidden="true"><span id="lv-cap-t"></span></div>' +
     '<div class="lv-hearts" id="lv-hearts"></div>' +
     '<div class="lv-bottom">' +
-      '<a class="lv-pin" href="index.html" id="lv-pin"><span class="lv-pin-tag">Épinglé</span><span class="lv-pin-tx"><b>LOOPR</b> Le drop 14 est sur le site : <u>voir le site LOOPR</u></span></a>' +
+      '<a class="lv-pin" href="index.html#pieces" id="lv-pin"><span class="lv-pin-tag">Épinglé</span><span class="lv-pin-tx"><b>LOOPR</b> La collection est disponible uniquement sur le site : <u>voir la collection</u></span></a>' +
       '<ul class="lv-chat" id="lv-chat"></ul>' +
       '<div class="lv-card" id="lv-card"></div>' +
       '<form class="lv-bar" id="lv-form" autocomplete="off">' +
         '<label class="lv-input"><span class="sr-only" style="position:absolute;left:-9999px">Message</span><input id="lv-input" type="text" maxlength="90" placeholder="Dis quelque chose…" enterkeyhint="send"></label>' +
-        '<button class="lv-round bag" type="button" data-sheet-open aria-label="Voir les produits du live">' + ICON.bag + '<span class="n" id="lv-bagn">1</span></button>' +
+        '<button class="lv-round bag" type="button" data-sheet-open aria-label="Voir les pièces présentées">' + ICON.bag + '<span class="n" id="lv-bagn">5</span></button>' +
         '<button class="lv-round" type="button" data-share aria-label="Partager">' + ICON.share + "</button>" +
         '<button class="lv-round heart" type="button" data-like aria-label="Envoyer des cœurs">' + ICON.heart + "</button>" +
       "</form>" +
     "</div>" +
-    '<div class="lv-sheet" id="lv-sheet" role="dialog" aria-label="Produit du live"></div>';
+    '<div class="lv-sheet" id="lv-sheet" role="dialog" aria-label="Pièces présentées dans le live"></div>';
 
   var el = {
     chat: $("#lv-chat"), card: $("#lv-card"), sheet: $("#lv-sheet"), hearts: $("#lv-hearts"), gifts: $("#lv-gifts"),
@@ -115,35 +116,28 @@
   var run = 0;            /* change à chaque relance : les anciennes boucles s'arrêtent */
   var burst = false;
   var pinned = false;
-  var lastCall = false;
-  var otherUntil = 0;
   var viewers = 1240;
   var likes = 12400;
-  var wasOther = false;
 
   var USERS = ["mila.s", "theo_vint", "lea.thrift", "camille.d", "yanis.75", "noor_", "sarah.fr", "hugo.lyon", "jade__", "lucas.b", "manon.seconde", "ines.m", "adam.v", "clem.w", "paul_thrift", "romane.l"];
   var MSGS = [
-    "bonsoir tout le monde", "trop belle cette chemise", "elle est en quelle taille ?", "le denim est magnifique", "c’est combien ?", "85 € ça va", "je la veux !!",
-    "qui est de Lyon ? pop-up en décembre", "les coutures sont trop propres", "c’est vraiment une pièce unique ?", "elle vient d’un vieux jean ?", "je réserve !!",
-    "les patchs sont incroyables", "vous referez une chemise comme ça ?", "coucou depuis Bordeaux", "montre le dos stp", "zoome sur les patchs",
+    "bonsoir tout le monde", "trop belle cette collection", "elle est en quelle taille ?", "le denim est magnifique", "c’est combien ?",
+    "je regarde déjà le site", "qui est de Lyon ? pop-up en décembre", "les coutures sont trop propres", "c’est vraiment une pièce unique ?", "elle vient d’un vieux jean ?",
+    "on peut commander ici ?", "les patchs sont incroyables", "il y aura d’autres pièces comme ça ?", "coucou depuis Bordeaux", "montre le dos stp", "zoome sur les patchs",
     "j’ai pris la veste au dernier drop, elle est parfaite", "le LOOP Club ça donne quoi ?", "elle taille grand ?", "first", "trop bien ce concept",
-    "je suis dessus, ne la vendez pas", "elle ferait trop bien avec un jean brut", "5 h de travail, respect", "ça rend super bien sur toi", "ah elle est déjà épinglée !"
+    "je suis sur le site, chaque pièce a son passeport", "ça ferait trop bien avec un jean brut", "5 h de travail, respect", "le lien est bien épinglé en haut"
   ];
   var CAPS = [
     "Bonsoir tout le monde, merci d’être là pour le drop 14.",
-    "Aujourd’hui : la chemise patchs denim, pièce numéro huit.",
-    "Une chemise blanche et les chutes de jean du drop précédent.",
-    "Cinq heures d’atelier, cent pour cent coton.",
-    "Taille M, épaules 47 centimètres.",
-    "Une seule pièce, 85 euros, livraison offerte.",
-    "Touchez le sac jaune : elle est à vous pendant dix minutes.",
-    "Je regarde le chat, posez vos questions !"
+    "Ce soir : la nouvelle collection, douze pièces cousues à partir de vêtements existants.",
+    "Elles ne se vendent pas ici : toute la collection est disponible uniquement sur le site."
   ];
   var CAPS_LOOP = [
-    "Je la remets devant la caméra pour ceux qui arrivent.",
-    "Regardez les patchs : aucun n’est placé au hasard.",
-    "Il reste une seule pièce, une seule personne.",
-    "Réservée, elle est à vous pendant dix minutes."
+    "Le lien du site est épinglé en haut du chat.",
+    "Chaque pièce n’existe qu’une fois, avec son passeport sur le site.",
+    "Je regarde le chat, posez vos questions !",
+    "Les membres Loop entrent sur le site vingt-quatre heures avant tout le monde.",
+    "Toute la collection est à retrouver sur le site LOOPR."
   ];
 
   /* ---------- Chat ---------- */
@@ -182,7 +176,7 @@
     if (tok !== run) return;
     var text = capQueue.shift();
     if (!text) {
-      if (capIndex < CAPS.length) text = CAPS[capIndex++]; else text = CAPS_LOOP[(capIndex++ - CAPS.length) % CAPS_LOOP.length];
+      text = CAPS_LOOP[capIndex++ % CAPS_LOOP.length];
     }
     capBusy = true;
     el.capT.textContent = text;
@@ -241,27 +235,39 @@
     })();
   }
 
-  /* ---------- Carte produit épinglée et fiche ---------- */
-  function otherActive() { return otherUntil > Date.now(); }
-  function state() {
-    var mine = A.inCart(N);
-    if (!mine && A.isSold(N)) return { k: "sold" };
-    if (mine) return { k: "mine", left: A.mmss(A.holdOf(N) - Date.now()) };
-    if (otherActive()) return { k: "other", left: A.mmss(otherUntil - Date.now()) };
-    return { k: "free" };
+  /* ---------- Pièce présentée, carte et liste (tout renvoie vers le site) ---------- */
+  var garmentEl = $("#lv-garment");
+  function sizeWord(p) { return p.size === "Unique" ? "taille unique" : "taille " + p.size; }
+  function cap1(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function pieceLines(p) {
+    return [
+      "Pièce numéro " + p.n + " : " + p.name + ".",
+      p.origin,
+      p.hours.replace(" h ", NB + "h ") + " d’atelier, " + p.matter.toLowerCase() + ".",
+      cap1(sizeWord(p)) + ", " + p.price + " euros.",
+      "Elle est à retrouver uniquement sur le site."
+    ];
   }
+  function setPiece(i, instant) {
+    cur = i; N = SHOW[i]; P = A.byN(N);
+    function swap() { garmentEl.innerHTML = A.pieceArt(P, "live"); garmentEl.classList.remove("swap"); render(); }
+    if (instant || reduce) return swap();
+    garmentEl.classList.add("swap");
+    var tok = run;
+    setTimeout(function () { if (tok === run) swap(); }, 260);
+  }
+  function nextPiece() {
+    setPiece((cur + 1) % SHOW.length);
+    capQueue = pieceLines(A.byN(SHOW[cur]));
+    if (!capBusy) nextCap(run);
+    hearts(4);
+  }
+
   function renderCard() {
-    var s = state();
     if (!pinned) { el.card.classList.remove("is-on"); return; }
-    var sub = s.k === "mine" ? "Gardée pour toi : " + s.left
-      : s.k === "sold" ? "Vendue · pièce unique"
-      : s.k === "other" ? "Un spectateur l’a réservée : " + s.left
-      : lastCall ? '<span class="alert">Dernier appel · 1 pièce</span>' : A.eur(P.price) + " · 1 seule pièce";
-    var cta = s.k === "mine" ? '<button class="pc-cta is-mine" type="button" data-live-cart>Mon panier</button>'
-      : s.k === "sold" || s.k === "other" ? '<button class="pc-cta" type="button" disabled>' + (s.k === "sold" ? "Vendue" : "Prise") + "</button>"
-      : '<button class="pc-cta" type="button" data-live-reserve>Réserver</button>';
-    var html = '<button class="pc-main" type="button" data-sheet-open aria-label="Voir la fiche de la pièce ' + NUM + '"><span class="pc-th">' + A.pieceArt(P, "card") + "<em>1</em></span>" +
-      '<span class="pc-tx"><b>N°' + NB + A.pad(N) + " · " + P.name + "</b><span>" + sub + "</span></span></button>" + cta;
+    var html = '<button class="pc-main" type="button" data-sheet-open aria-label="Voir les pièces présentées dans le live"><span class="pc-th">' + A.pieceArt(P, "card") + "<em>" + SHOW.length + "</em></span>" +
+      '<span class="pc-tx"><b>N°' + NB + A.pad(N) + " · " + P.name + "</b><span>" + A.eur(P.price) + " · sur le site uniquement</span></span></button>" +
+      '<a class="pc-cta" href="piece.html?p=' + N + '">Voir sur le site</a>';
     if (el.card.getAttribute("data-sig") !== html) {
       el.card.setAttribute("data-sig", html);
       el.card.innerHTML = html;
@@ -269,68 +275,37 @@
     el.card.classList.add("is-on");
   }
   function renderSheet() {
-    var s = state();
-    var btn = s.k === "mine" ? '<button class="lv-big is-mine" type="button" data-live-cart>Voir mon panier</button>'
-      : s.k === "sold" ? '<button class="lv-big" type="button" disabled>Pièce vendue</button>'
-      : s.k === "other" ? '<button class="lv-big" type="button" disabled>Réservée par un autre spectateur</button>'
-      : '<button class="lv-big" type="button" data-live-reserve>Réserver 10 minutes</button>';
-    var note = s.k === "sold" ? "Cette pièce unique a trouvé sa personne. Le prochain drop arrive bientôt."
-      : s.k === "mine" ? "Gardée pour toi : <b>" + s.left + "</b>. Passe commande avant la fin du compte à rebours."
-      : s.k === "other" ? "Elle revient dans <b>" + s.left + "</b> si la personne ne finalise pas."
-      : "Tu as 10 minutes pour finaliser. Passé ce délai, la pièce est remise en vente.";
-    var html = '<div class="lv-sheet-head"><h2>Produits du live (1)</h2><button type="button" data-sheet-close aria-label="Fermer la fiche">' + ICON.x + "</button></div>" +
-      '<div class="lv-prod"><div class="ph">' + A.pieceArt(P, "sheet") + "</div><div>" +
-      "<h3>N°" + NB + A.pad(N) + " · " + P.name + '</h3><div class="pr">' + A.eur(P.price) + ' <small>livraison offerte</small></div>' +
-      "<p>Taille " + P.size + " · " + P.matter + "</p><p>" + P.measures + "</p></div></div>" +
-      '<div class="lv-passport"><b>Passeport de la pièce</b>' + P.origin + " " + P.hours.replace(" h ", NB + "h ") + " d’atelier.</div>" +
-      btn + '<p class="lv-hold">' + note + ' <a href="piece.html?p=' + N + '">Voir la fiche complète</a></p>';
+    var rows = SHOW.map(function (n, i) {
+      var p = A.byN(n);
+      return '<a class="lv-row' + (i === cur ? " is-now" : "") + '" href="piece.html?p=' + n + '"><span class="ph">' + A.pieceArt(p, "s") + "</span>" +
+        '<span class="tx"><b>N°' + NB + A.pad(n) + " · " + p.name + "</b><span>" + A.eur(p.price) + " · " + sizeWord(p) + (i === cur ? " · en ce moment" : "") + "</span></span><i>Voir</i></a>";
+    }).join("");
+    var html = '<div class="lv-sheet-head"><h2>Pièces présentées (' + SHOW.length + ')</h2><button type="button" data-sheet-close aria-label="Fermer la liste">' + ICON.x + "</button></div>" +
+      '<div class="lv-list">' + rows + "</div>" +
+      '<a class="lv-big" href="index.html#pieces">Voir toute la collection sur le site</a>' +
+      '<p class="lv-hold">Rien ne se commande dans le live. Chaque pièce se réserve sur le site, pendant 10 minutes.</p>';
     if (el.sheet.getAttribute("data-sig") !== html) {
       el.sheet.setAttribute("data-sig", html);
       el.sheet.innerHTML = html;
     }
   }
-  function render() {
-    renderCard();
-    renderSheet();
-    var other = otherActive();
-    var btn = $("#regie-other");
-    if (btn) btn.disabled = other || A.inCart(N) || A.isSold(N);
-    if (wasOther && !other) {
-      wasOther = false;
-      sys("La réservation a expiré : la pièce " + NUM + " est de nouveau disponible.");
-      viewerMsg("elle revient !!");
-      say("Elle est de nouveau disponible, c’est le moment !");
-      hearts(4);
-    }
-  }
+  function render() { renderCard(); renderSheet(); }
   function openSheet() { el.sheet.classList.add("is-open"); renderSheet(); }
   function closeSheet() { el.sheet.classList.remove("is-open"); }
 
-  function reserveNow() {
-    if (A.inCart(N)) { A.openDrawer("cart"); return; }
-    if (otherActive()) return;
-    A.reserve(N);
-    if (A.inCart(N)) {
-      closeSheet();
-      sys("Tu as réservé la pièce " + NUM + " : elle est à toi pendant 10 minutes.");
-      hearts(8, 60);
-      setTimeout(function () { viewerMsg("bravo !!"); }, 900);
-      setTimeout(function () { hostReply("Bravo, elle est pour toi !", "Bravo, elle est à vous. Dix minutes pour finaliser."); }, 1800);
-    }
-  }
-
   /* ---------- Réponses de l'hôte au chat ---------- */
-  var REPLIES = [
-    [/taille|size|grand|petit|mesure/, "La M : épaules 47 cm, longueur 70 cm.", "Taille M : épaules 47 centimètres, longueur 70."],
-    [/prix|combien|cher|euro/, "85 €, livraison offerte.", "Quatre-vingt-cinq euros, livraison offerte."],
-    [/livr|expedi|delai/, "Livraison offerte dès 60 €, donc offerte ici.", "La livraison est offerte dès soixante euros."],
-    [/matiere|coton|tissu|jean|denim/, "100 % coton : une chemise blanche et des chutes de jean.", "Cent pour cent coton, une chemise et des chutes de jean."],
-    [/reserv|panier|prendre|veux|acheter/, "Touche le sac jaune puis Réserver : 10 minutes pour toi.", "Touchez le sac jaune, puis Réserver."],
-    [/bonjour|salut|coucou|bonsoir|hello/, "Coucou et bienvenue dans le live !", "Bienvenue dans le live !"]
-  ];
   function reply(text) {
     var t = plain(text);
-    var r = REPLIES.filter(function (x) { return x[0].test(t); })[0];
+    var ship = P.price >= D.freeShippingFrom ? "livraison offerte" : "livraison offerte dès " + D.freeShippingFrom + NB + "€ d’achats";
+    var R = [
+      [/command|reserv|panier|prendre|veux|acheter|lien|site|dispo|vend/, "Tout se commande sur le site LOOPR : le lien est épinglé en haut du chat.", "Toute la collection est disponible uniquement sur le site, le lien est épinglé."],
+      [/taille|size|grand|petit|mesure/, "La " + P.size + " : " + P.measures.toLowerCase() + ".", cap1(sizeWord(P)) + "."],
+      [/prix|combien|cher|euro/, A.eur(P.price) + ", " + ship + ", sur le site.", P.price + " euros, sur le site."],
+      [/livr|expedi|delai/, "Livraison offerte dès " + D.freeShippingFrom + NB + "€ d’achats, " + A.eur(D.shippingFee) + " sinon.", "La livraison est offerte dès " + D.freeShippingFrom + " euros."],
+      [/matiere|coton|tissu|jean|denim/, P.matter + ". " + P.origin, P.matter + "."],
+      [/bonjour|salut|coucou|bonsoir|hello/, "Coucou et bienvenue dans le live !", "Bienvenue dans le live !"]
+    ];
+    var r = R.filter(function (x) { return x[0].test(t); })[0];
     if (r) hostReply(r[1], r[2]); else hostReply("Merci pour ton message, je lis tout.", "Merci pour vos messages, je lis tout.");
   }
 
@@ -338,23 +313,26 @@
   function start() {
     var tok = ++run;
     clearTimeout(capTimer);
-    capQueue = []; capIndex = 0; capBusy = false; burst = false;
-    pinned = false; lastCall = false; otherUntil = 0; wasOther = false;
+    capQueue = CAPS.slice(); capIndex = 0; capBusy = false; burst = false;
+    pinned = false;
+    setPiece(0, true);
+    pieceLines(A.byN(SHOW[0])).forEach(function (l) { capQueue.push(l); });
     el.chat.innerHTML = ""; el.cap.classList.remove("is-on"); root.classList.remove("is-talking");
     el.card.removeAttribute("data-sig");
     el.bag.parentNode.style.visibility = "hidden";
     closeSheet();
-    [ "bonsoir !", "coucou depuis Lyon", "ça commence !", "trop hâte de voir la pièce" ].forEach(function (m) { viewerMsg(m); });
+    [ "bonsoir !", "coucou depuis Lyon", "ça commence !", "trop hâte de voir la collection" ].forEach(function (m) { viewerMsg(m); });
     sys("Bienvenue dans le live LOOPR. Respecte les autres spectateurs.");
     setTimeout(function () { nextCap(tok); }, 600);
     setTimeout(function () {
       if (tok !== run) return;
       pinned = true;
       el.bag.parentNode.style.visibility = "visible";
-      sys("LOOPR a épinglé la pièce " + NUM + ".");
+      sys("LOOPR a épinglé le lien du site : la collection n’est disponible que là.");
       render();
       hearts(5);
     }, 3200);
+    (function rotate() { setTimeout(function () { if (tok !== run) return; nextPiece(); rotate(); }, 34000); })();
     every(function () { viewerMsg(); }, 1000, 2300, tok);
     every(function () { heart(); if (Math.random() < 0.5) heart(); likes += 1; el.likes.textContent = k(likes); }, 650, 1500, tok);
     (function tick() {
@@ -371,8 +349,6 @@
   root.addEventListener("click", function (e) {
     var t = e.target.closest("button, #lv-video");
     if (!t) return;
-    if (t.hasAttribute("data-live-reserve")) return reserveNow();
-    if (t.hasAttribute("data-live-cart")) return A.openDrawer("cart");
     if (t.hasAttribute("data-sheet-open")) return openSheet();
     if (t.hasAttribute("data-sheet-close")) return closeSheet();
     if (t.hasAttribute("data-like")) return hearts(6, 55);
@@ -409,27 +385,16 @@
       say("Merci à tous, vous êtes de plus en plus nombreux !");
       setTimeout(function () { if (tok === run) burst = false; }, 15000);
     }
-    if (a === "last") {
+    if (a === "next") { if (pinned) nextPiece(); }
+    if (a === "link") {
       if (!pinned) return;
-      lastCall = true;
-      sys("Dernier appel : la pièce " + NUM + " part bientôt.");
-      say("Dernier appel pour la chemise patchs denim !");
-      viewerMsg("je me décide !!"); viewerMsg("attends attends");
-      render();
-      setTimeout(function () { if (tok === run) { lastCall = false; render(); } }, 60000);
-    }
-    if (a === "other") {
-      if (!pinned || A.inCart(N) || otherActive()) return;
-      otherUntil = Date.now() + 45000;
-      wasOther = true;
-      sys("Un spectateur vient de réserver la pièce " + NUM + ".");
-      viewerMsg("noooon, trop tard");
-      say("Quelqu’un vient de la réserver. Elle revient si le paiement n’est pas finalisé.");
-      render();
+      sys("LOOPR rappelle le lien du site.");
+      say("Toute la collection est disponible uniquement sur le site, le lien est épinglé en haut du chat.");
+      viewerMsg("j’y vais !!"); viewerMsg("le lien marche");
+      var pin = $("#lv-pin");
+      pin.classList.remove("is-ping"); void pin.offsetWidth; pin.classList.add("is-ping");
     }
   });
 
-  document.addEventListener("loopr:refresh", render);
-  setInterval(render, 1000);
   start();
 })();

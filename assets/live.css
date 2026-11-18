@@ -136,9 +136,8 @@
 .lv-card .pc-tx b { display: block; font-size: 12px; font-weight: 700; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lv-card .pc-tx span { display: block; margin-top: 2px; font-size: 11px; color: rgba(27, 36, 89, 0.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lv-card .pc-tx .alert { color: #c73b2e; font-weight: 700; animation: lv-pulse 1.2s ease-in-out infinite; }
-.lv-card .pc-cta { flex: none; align-self: center; margin: 0 6px; padding: 8px 11px; border: 2px solid var(--indigo); border-radius: 8px; background: var(--amber); color: var(--indigo); font-size: 12px; font-weight: 700; }
-.lv-card .pc-cta[disabled] { background: #e3e6ef; color: rgba(27, 36, 89, 0.55); border-color: rgba(27, 36, 89, 0.25); cursor: not-allowed; }
-.lv-card .pc-cta.is-mine { background: var(--indigo); color: #fff; }
+.lv-card .pc-cta { flex: none; align-self: center; margin: 0 6px; padding: 8px 11px; border: 2px solid var(--indigo); border-radius: 8px; background: var(--amber); color: var(--indigo); font-size: 12px; font-weight: 700; line-height: 1.15; text-align: center; text-decoration: none; }
+.lv-card .pc-cta:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
 
 .lv-bar { display: flex; align-items: center; gap: 8px; }
 .lv-input { flex: 1; min-width: 0; display: flex; }
@@ -184,10 +183,8 @@
 .lv-passport b { display: block; margin-bottom: 2px; }
 .lv-sheet .lv-big {
   display: block; width: 100%; padding: 12px; border: 2px solid var(--indigo); border-radius: 10px; background: var(--amber); box-shadow: 3px 3px 0 var(--indigo);
-  color: var(--indigo); font-size: 14px; font-weight: 700; text-align: center;
+  color: var(--indigo); font-size: 14px; font-weight: 700; text-align: center; text-decoration: none;
 }
-.lv-sheet .lv-big[disabled] { background: #e3e6ef; box-shadow: none; color: rgba(27, 36, 89, 0.55); cursor: not-allowed; }
-.lv-sheet .lv-big.is-mine { background: var(--indigo); color: #fff; box-shadow: 3px 3px 0 var(--amber); }
 .lv-sheet .lv-hold { margin: 8px 0 0; font-size: 12px; text-align: center; color: rgba(27, 36, 89, 0.82); }
 .lv-sheet .lv-hold a { color: var(--indigo); font-weight: 600; }
 
@@ -221,3 +218,19 @@
   .lv-chat li, .lv-card.is-on, .lv-gift { animation: none; }
   .lv-sheet { transition: none; }
 }
+
+/* ---------- Collection : pièce présentée, liste, lien épinglé ---------- */
+.lv-garment { transition: opacity 0.25s ease; }
+.lv-garment.swap { opacity: 0; }
+.lv-list { display: grid; gap: 6px; margin-bottom: 12px; }
+.lv-row { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border: 1.5px solid rgba(27, 36, 89, 0.18); border-radius: 10px; color: var(--indigo); text-decoration: none; }
+.lv-row.is-now { border-color: var(--indigo); background: var(--amber-pale); }
+.lv-row .ph { flex: none; width: 44px; height: 48px; padding: 3px; border-radius: 8px; background: var(--wash-deep); }
+.lv-row .ph svg { display: block; width: 100%; height: 100%; }
+.lv-row .tx { flex: 1; min-width: 0; }
+.lv-row .tx b { display: block; font-size: 13px; line-height: 1.2; }
+.lv-row .tx span { display: block; margin-top: 2px; font-size: 11px; color: rgba(27, 36, 89, 0.75); }
+.lv-row i { flex: none; font-style: normal; font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.lv-pin.is-ping { animation: lv-ping 1.4s ease-out 2; }
+@keyframes lv-ping { 0%, 100% { box-shadow: 0 0 0 0 rgba(242, 167, 27, 0); } 30% { box-shadow: 0 0 0 4px rgba(242, 167, 27, 0.9); } }
+@media (prefers-reduced-motion: reduce) { .lv-garment { transition: none; } .lv-pin.is-ping { animation: none; box-shadow: 0 0 0 3px var(--amber); } }

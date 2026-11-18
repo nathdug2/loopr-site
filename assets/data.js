@@ -4,7 +4,7 @@ window.LOOPR = {
   freeShippingFrom: 60,
   shippingFee: 4.9,
 
-  // statut : dispo | reservee | vendue | tiktok (exclu live pendant 72 h)
+  // statut : dispo | reservee | vendue
   pieces: [
     { n: 1, slug: "veste-trucker-patchwork", name: "Veste trucker patchwork", type: "jacket", fabric: "patch", panel: "a", size: "M", price: 129, status: "dispo", cat: "vestes",
       source: { types: ["trousers", "trousers"], fabric: "denim", label: "2 jeans déclassés" },
@@ -27,7 +27,7 @@ window.LOOPR = {
     { n: 7, slug: "gilet-indigo-matelasse", name: "Gilet indigo matelassé", type: "vest", fabric: "denim", panel: "b", size: "M", price: 69, status: "dispo", cat: "vestes",
       source: { types: ["jacket"], fabric: "denim", label: "1 veste en jean" },
       origin: "Une veste en jean sans manches, doublée avec une couverture de laine.", hours: "3 h 50", matter: "Coton denim, doublure laine recyclée", measures: "Longueur 58 cm, épaules 42 cm" },
-    { n: 8, slug: "chemise-patchs-denim", name: "Chemise patchs denim", type: "shirt", fabric: "patch", panel: "d", size: "M", price: 85, status: "tiktok", cat: "hauts",
+    { n: 8, slug: "chemise-patchs-denim", name: "Chemise patchs denim", type: "shirt", fabric: "patch", panel: "d", size: "M", price: 85, status: "dispo", cat: "hauts",
       source: { types: ["shirt", "trousers"], fabric: "denim", label: "1 chemise + 1 jean" },
       origin: "Une chemise blanche et les chutes de jean du drop précédent.", hours: "5 h 00", matter: "100 % coton", measures: "Longueur 70 cm, épaules 47 cm" },
     { n: 9, slug: "pantalon-droit-rayure", name: "Pantalon droit à rayures", type: "trousers", fabric: "stripe", panel: "a", size: "38", price: 98, status: "dispo", cat: "bas",

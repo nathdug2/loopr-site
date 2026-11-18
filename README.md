@@ -4,7 +4,7 @@ Maquette statique (HTML, CSS, JavaScript, sans dépendance) du site propre de LO
 
 ## Pages
 
-- `index.html` : drop en cours (12 pièces, statuts en direct), compte à rebours du prochain drop, exclusivité live TikTok 72 h, accès anticipé membres, teaser pop-up
+- `index.html` : drop en cours (12 pièces, statuts en direct), compte à rebours du prochain drop, lien vers le live TikTok (présentation de la collection, achat uniquement sur le site), accès anticipé membres, teaser pop-up
 - `piece.html?p=1` à `?p=12` : fiche pièce unique (avant/après, passeport, réservation 10 min, alerte, envies)
 - `popup.html` : prochain pop-up, créneau d'essayage, retrait sur place, calendrier des villes
 - `club.html` : LOOP Club (Seed, Loop, Collector)
