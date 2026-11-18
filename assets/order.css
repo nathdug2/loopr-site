@@ -1,0 +1,74 @@
+/* LOOPR — pages Commande, Suivi et passeport de la pièce. */
+.ord { padding-block: 2.5rem 4rem; }
+.ord-sim { display: inline-block; padding: 0.25rem 0.75rem; border: 2px dashed var(--amber); border-radius: 99px; background: var(--amber-pale); font-weight: 600; font-size: 0.875rem; }
+.ord-title { margin: 1rem 0 0; font-family: var(--display); font-weight: 800; font-stretch: 75%; font-size: clamp(3rem, 11vw, 6rem); line-height: 0.92; color: var(--indigo); }
+.ord-sub { margin-top: 1rem; max-width: 52ch; font-size: 1.125rem; }
+.ord-grid { display: grid; gap: 2rem; margin-top: 2.25rem; align-items: start; }
+.ord-card { padding: 1.5rem; background: var(--label); border: 2px solid var(--indigo); border-radius: 6px; box-shadow: 5px 5px 0 var(--amber); }
+.ord-card h2 { margin: 0 0 1rem; font-family: var(--display); font-weight: 700; font-size: 1.375rem; }
+.ord-line { display: grid; grid-template-columns: 76px 1fr auto; gap: 14px; align-items: start; padding-block: 0.75rem; border-top: 2px dashed rgba(27, 36, 89, 0.25); }
+.ord-line:first-of-type { border-top: 0; padding-top: 0; }
+.ord-ph { width: 76px; height: 88px; padding: 4px; border: 2px solid var(--indigo); border-radius: 4px; background: var(--wash-deep); }
+.ord-ph svg { display: block; width: 100%; height: 100%; }
+.ord-name { font-weight: 700; }
+.ord-sums { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 2px solid var(--indigo); display: grid; gap: 0.25rem; }
+.ord-sums div { display: flex; justify-content: space-between; }
+.ord-sums .total { font-weight: 700; font-size: 1.125rem; }
+.ord-meta { margin-top: 1rem; font-size: 0.9375rem; color: rgba(27, 36, 89, 0.8); }
+.ord-side { display: grid; gap: 1rem; }
+.ord-next { padding: 1.25rem 1.5rem; border: 2px dashed var(--indigo); border-radius: 6px; background: var(--wash); }
+.ord-next h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.25rem; }
+.ord-next p { margin: 0.5rem 0 1rem; }
+.ord-empty { max-width: 46ch; }
+.ord-empty p { margin: 1rem 0 1.5rem; font-size: 1.125rem; }
+.ord-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+/* Suivi : frise cousue */
+.trk { position: relative; list-style: none; margin: 0; padding: 0; }
+.trk li { position: relative; padding: 0 0 1.5rem 2.75rem; }
+.trk li::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; border-left: 3px dashed rgba(27, 36, 89, 0.3); }
+.trk li:last-child { padding-bottom: 0; }
+.trk li:last-child::before { display: none; }
+.trk .dot { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--indigo); background: var(--label); font-weight: 700; font-size: 0.8125rem; }
+.trk li.is-done .dot { background: var(--indigo); color: var(--label); }
+.trk li.is-done::before { border-left-color: var(--amber); border-left-style: solid; }
+.trk li.is-now .dot { background: var(--amber); box-shadow: 0 0 0 4px var(--amber-pale); }
+.trk b { display: block; font-size: 1.0625rem; }
+.trk span { color: rgba(27, 36, 89, 0.78); font-size: 0.9375rem; }
+.trk li:not(.is-done):not(.is-now) b { color: rgba(27, 36, 89, 0.55); }
+.trk-ctl { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 2px dashed rgba(27, 36, 89, 0.25); }
+.trk-ctl small { flex-basis: 100%; color: rgba(27, 36, 89, 0.7); }
+
+/* Passeport : une étiquette cousue */
+.pass { position: relative; padding: 1.5rem; background: var(--label); border: 2px solid var(--indigo); border-radius: 6px; box-shadow: 5px 5px 0 var(--amber); }
+.pass.is-locked .pass-body { display: none; }
+.pass-lock { display: none; }
+.pass.is-locked .pass-lock { display: block; }
+.pass-lock p { margin: 0.75rem 0 1rem; max-width: 40ch; }
+.tagl {
+  display: inline-flex; flex-direction: column; align-items: center; padding: 0.75rem 1.5rem 0.9rem; background: #fff; border: 2px solid var(--indigo); border-radius: 4px;
+  outline: 3px dashed var(--amber); outline-offset: -9px; font-family: var(--display); color: var(--indigo);
+}
+.tagl small { font-family: var(--body); font-weight: 600; font-size: 0.75rem; }
+.tagl strong { font-weight: 800; font-stretch: 75%; font-size: 3.25rem; line-height: 1; }
+.pass h2 { margin: 1rem 0 0.25rem; font-family: var(--display); font-weight: 700; font-size: 1.625rem; line-height: 1.1; }
+.pass-facts { display: grid; gap: 0.6rem 1.5rem; margin: 1.25rem 0; }
+.pass-facts div { padding-top: 0.6rem; border-top: 2px dashed rgba(27, 36, 89, 0.25); }
+.pass-facts dt { font-weight: 700; font-size: 0.875rem; }
+.pass-facts dd { margin: 0; }
+.pass-care { padding: 0.75rem 1rem; border: 2px dashed var(--indigo); border-radius: 4px; background: var(--wash); }
+.pass-care b { display: block; }
+.pass.is-new { animation: pass-in 0.5s ease-out; }
+@keyframes pass-in { from { transform: translateY(10px); opacity: 0; } }
+
+.club-status { margin-bottom: 1.5rem; padding: 1rem 1.25rem; border: 2px solid var(--indigo); border-radius: 6px; background: var(--amber-pale); box-shadow: 4px 4px 0 var(--indigo); }
+.club-status b { font-family: var(--display); font-size: 1.25rem; }
+.club-status p { margin: 0.25rem 0 0; }
+
+.dlg-btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+
+@media (min-width: 820px) {
+  .ord-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 3rem; }
+  .pass-facts { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .pass.is-new { animation: none; } }

@@ -4,6 +4,9 @@
   var D = window.LOOPR;
   var CART_KEY = "loopr.cart.v1";
   var WISH_KEY = "loopr.wish.v1";
+  var ORDER_KEY = "loopr.order.v1";
+  var SOLD_KEY = "loopr.sold.v1";
+  var TRACK_KEY = "loopr.track.v1";
   var HOLD_MS = 10 * 60 * 1000;
   var NB = " ";
 
@@ -120,12 +123,13 @@
   }
   function inCart(n) { return readCart().some(function (i) { return i.n === n; }); }
   function holdOf(n) { var f = readCart().filter(function (i) { return i.n === n; })[0]; return f ? f.until : 0; }
-  function stateOf(p) { return inCart(p.n) ? "panier" : p.status; }
+  function isSold(n) { return store.get(SOLD_KEY, []).indexOf(Number(n)) >= 0; }
+  function stateOf(p) { return inCart(p.n) ? "panier" : isSold(p.n) ? "vendue" : p.status; }
   function readWish() { return store.get(WISH_KEY, []); }
 
   function reserve(n) {
     var p = byN(n);
-    if (!p || inCart(n)) return;
+    if (!p || inCart(n) || isSold(n)) return;
     /* Une pièce « tiktok » est réservée aux spectateurs : elle ne se réserve que depuis la page du live. */
     if (p.status !== "dispo" && !(p.status === "tiktok" && window.LOOPR_LIVE_ON)) return;
     var c = readCart();
@@ -134,6 +138,22 @@
     refreshAll();
     openDrawer("cart");
     toast("Pièce n°" + NB + pad(n) + " réservée pour 10 minutes.");
+  }
+  function placeOrder(method) {
+    var items = readCart().map(function (i) { return byN(i.n); }).filter(Boolean);
+    if (!items.length) return false;
+    var sub = items.reduce(function (a, p) { return a + p.price; }, 0);
+    var ship = sub >= D.freeShippingFrom ? 0 : D.shippingFee;
+    store.set(ORDER_KEY, {
+      id: "LP-" + D.drop.number + "-" + String(Math.floor(1000 + Math.random() * 9000)),
+      at: Date.now(), method: method, items: items.map(function (p) { return p.n; }), sub: sub, ship: ship, total: sub + ship
+    });
+    var sold = store.get(SOLD_KEY, []);
+    items.forEach(function (p) { if (sold.indexOf(p.n) < 0) sold.push(p.n); });
+    store.set(SOLD_KEY, sold);
+    store.set(TRACK_KEY, 0);
+    store.set(CART_KEY, []);
+    return true;
   }
   function removeFromCart(n) {
     store.set(CART_KEY, readCart().filter(function (i) { return i.n !== n; }));
@@ -251,7 +271,7 @@
       '<div><a class="brand" href="index.html" aria-label="LOOPR, accueil"><span class="brand-word">LOOPR</span></a>' +
       '<p style="margin-top:.75rem;max-width:34ch">LOOPR coud des vêtements existants en pièces uniques. Une pièce, un exemplaire, une seule personne.</p></div>' +
       '<div><h3>Acheter</h3><ul><li><a href="index.html#pieces">Le drop ' + D.drop.number + '</a></li><li><a href="live.html">Live</a></li><li><a href="popup.html">Pop-up</a></li><li><a href="club.html">LOOP Club</a></li></ul></div>' +
-      '<div><h3>Aide</h3><ul><li><a href="#" data-soon>Livraison et retours</a></li><li><a href="#" data-soon>Passeport de la pièce</a></li><li><a href="#" data-soon>Contact</a></li></ul></div>' +
+      '<div><h3>Aide</h3><ul><li><a href="suivi.html">Suivre ma commande</a></li><li><a href="#" data-soon>Livraison et retours</a></li><li><a href="suivi.html">Passeport de la pièce</a></li><li><a href="#" data-soon>Contact</a></li></ul></div>' +
       '<div><h3>Suivre</h3><ul><li><a href="#" data-soon>TikTok</a></li><li><a href="#" data-soon>Instagram</a></li></ul></div>' +
       '</div><p class="foot-note">Maquette du site LOOPR réalisée pour un cas d’école. Les pièces, prix, dates de pop-up et textes sont des exemples. Les illustrations remplacent les photos.</p></div></footer>';
 
@@ -263,7 +283,7 @@
       '<button class="icon-btn" type="button" data-close aria-label="Fermer">×</button></div>' +
       '<div class="drawer-body" id="drawer-body"></div><div class="drawer-foot" id="drawer-foot"></div></aside>' +
       '<div class="toast" id="toast" role="status" aria-live="polite"></div>' +
-      '<dialog id="checkout"><form method="dialog"><h2>Paiement non branché</h2><p id="checkout-msg"></p><button class="btn" value="ok">Fermer</button></form></dialog>';
+      '<dialog id="checkout"><form method="dialog"><h2>Paiement simulé</h2><p id="checkout-msg"></p><div class="dlg-btns"><button class="btn" value="ok">Valider la commande simulée</button><button class="btn btn--ghost" value="cancel">Retour au panier</button></div></form></dialog>';
     while (shell.firstChild) document.body.appendChild(shell.firstChild);
   }
 
@@ -495,6 +515,7 @@
   }
 
   /* ---------- Événements ---------- */
+  var pendingMethod = "";
   document.addEventListener("click", function (e) {
     var t = e.target.closest("button, a, [data-close]");
     if (!t) return;
@@ -506,8 +527,9 @@
     if (t.hasAttribute("data-tab")) { drawerTab = t.getAttribute("data-tab"); return renderDrawer(); }
     if (t.hasAttribute("data-filter")) { filter = t.getAttribute("data-filter"); buildChips(); return renderHome(); }
     if (t.hasAttribute("data-checkout")) {
-      $("#checkout-msg").textContent = "Ici s’ouvrira le " + t.getAttribute("data-checkout") + " : adresse, livraison, paiement. Dans la vraie boutique, cette étape est gérée par Shopify.";
+      $("#checkout-msg").textContent = "Ici s’ouvrira le " + t.getAttribute("data-checkout") + " : adresse, livraison, paiement. Dans la vraie boutique, cette étape est gérée par Shopify. Dans la maquette, aucun paiement n’est effectué.";
       var dlg = $("#checkout");
+      pendingMethod = t.getAttribute("data-checkout");
       if (dlg.showModal) dlg.showModal();
       return;
     }
@@ -524,8 +546,12 @@
   });
 
   /* ---------- Démarrage ---------- */
-  window.LOOPR_APP = { byN: byN, pad: pad, eur: eur, mmss: mmss, pieceArt: pieceArt, reserve: reserve, inCart: inCart, holdOf: holdOf, toast: toast, openDrawer: openDrawer };
+  window.LOOPR_APP = { store: store, KEYS: { order: ORDER_KEY, sold: SOLD_KEY, track: TRACK_KEY }, isSold: isSold, byN: byN, pad: pad, eur: eur, mmss: mmss, pieceArt: pieceArt, reserve: reserve, inCart: inCart, holdOf: holdOf, toast: toast, openDrawer: openDrawer };
   buildChrome();
+  $("#checkout").addEventListener("close", function () {
+    if ($("#checkout").returnValue === "ok" && pendingMethod && placeOrder(pendingMethod)) window.location.href = "commande.html";
+    pendingMethod = "";
+  });
   buildChips();
   renderHomeExtras();
   refreshAll();

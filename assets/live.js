@@ -244,6 +244,7 @@
   function otherActive() { return otherUntil > Date.now(); }
   function state() {
     var mine = A.inCart(N);
+    if (!mine && A.isSold(N)) return { k: "sold" };
     if (mine) return { k: "mine", left: A.mmss(A.holdOf(N) - Date.now()) };
     if (otherActive()) return { k: "other", left: A.mmss(otherUntil - Date.now()) };
     return { k: "free" };
@@ -252,10 +253,11 @@
     var s = state();
     if (!pinned) { el.card.classList.remove("is-on"); return; }
     var sub = s.k === "mine" ? "Gardée pour toi : " + s.left
+      : s.k === "sold" ? "Vendue · pièce unique"
       : s.k === "other" ? "Un spectateur l’a réservée : " + s.left
       : lastCall ? '<span class="alert">Dernier appel · 1 pièce</span>' : A.eur(P.price) + " · 1 seule pièce";
     var cta = s.k === "mine" ? '<button class="pc-cta is-mine" type="button" data-live-cart>Mon panier</button>'
-      : s.k === "other" ? '<button class="pc-cta" type="button" disabled>Prise</button>'
+      : s.k === "sold" || s.k === "other" ? '<button class="pc-cta" type="button" disabled>' + (s.k === "sold" ? "Vendue" : "Prise") + "</button>"
       : '<button class="pc-cta" type="button" data-live-reserve>Réserver</button>';
     var html = '<button class="pc-main" type="button" data-sheet-open aria-label="Voir la fiche de la pièce ' + NUM + '"><span class="pc-th">' + A.pieceArt(P, "card") + "<em>1</em></span>" +
       '<span class="pc-tx"><b>N°' + NB + A.pad(N) + " · " + P.name + "</b><span>" + sub + "</span></span></button>" + cta;
@@ -268,9 +270,11 @@
   function renderSheet() {
     var s = state();
     var btn = s.k === "mine" ? '<button class="lv-big is-mine" type="button" data-live-cart>Voir mon panier</button>'
+      : s.k === "sold" ? '<button class="lv-big" type="button" disabled>Pièce vendue</button>'
       : s.k === "other" ? '<button class="lv-big" type="button" disabled>Réservée par un autre spectateur</button>'
       : '<button class="lv-big" type="button" data-live-reserve>Réserver 10 minutes</button>';
-    var note = s.k === "mine" ? "Gardée pour toi : <b>" + s.left + "</b>. Passe commande avant la fin du compte à rebours."
+    var note = s.k === "sold" ? "Cette pièce unique a trouvé sa personne. Le prochain drop arrive bientôt."
+      : s.k === "mine" ? "Gardée pour toi : <b>" + s.left + "</b>. Passe commande avant la fin du compte à rebours."
       : s.k === "other" ? "Elle revient dans <b>" + s.left + "</b> si la personne ne finalise pas."
       : "Tu as 10 minutes pour finaliser. Passé ce délai, la pièce est remise en vente.";
     var html = '<div class="lv-sheet-head"><h2>Produits du live (1)</h2><button type="button" data-sheet-close aria-label="Fermer la fiche">' + ICON.x + "</button></div>" +
@@ -289,7 +293,7 @@
     renderSheet();
     var other = otherActive();
     var btn = $("#regie-other");
-    if (btn) btn.disabled = other || A.inCart(N);
+    if (btn) btn.disabled = other || A.inCart(N) || A.isSold(N);
     if (wasOther && !other) {
       wasOther = false;
       sys("La réservation a expiré : la pièce " + NUM + " est de nouveau disponible.");
@@ -392,6 +396,11 @@
     var a = b.getAttribute("data-regie");
     var tok = run;
     if (a === "restart") return start();
+    if (a === "reset") {
+      A.store.set("loopr.cart.v1", []); A.store.set(A.KEYS.order, null); A.store.set(A.KEYS.sold, []); A.store.set(A.KEYS.track, 0);
+      window.location.reload();
+      return;
+    }
     if (a === "burst") {
       burst = true;
       sys("Le live s’emballe !");
