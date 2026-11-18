@@ -1,4 +1,4 @@
-/* LOOPR — page Live. Tout est simulé (chat, spectateurs, cœurs). Le live présente la nouvelle collection : rien ne s'y commande, chaque pièce renvoie vers le site. */
+/* LOOPR — page Live. Tout est simulé (chat, spectateurs, cœurs). Le live présente la nouvelle collection : rien ne s'y commande, le lien du site est épinglé en haut du chat. */
 (function () {
   "use strict";
   var A = window.LOOPR_APP;
@@ -24,7 +24,6 @@
   /* ---------- Icônes ---------- */
   var ICON = {
     heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.2S3.2 15.8 2.2 9.6C1.6 6 4 3.4 7 3.4c2 0 3.7 1 5 2.9 1.3-1.9 3-2.9 5-2.9 3 0 5.4 2.600 4.800 6.200-1 6.200-9.800 11.600-9.800 11.600z"/></svg>',
-    bag: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6.500a3 3 0 0 1 6 0V8"/></svg>',
     share: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v6h16v-6M12 15V3M7 8l5-5 5 5"/></svg>',
     x: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     logo: '<svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="#1b2459"/><circle cx="17" cy="17" r="9.500" fill="none" stroke="#f2a71b" stroke-width="2.500" stroke-dasharray="4 3"/></svg>'
@@ -81,18 +80,15 @@
       '<div class="lv-card" id="lv-card"></div>' +
       '<form class="lv-bar" id="lv-form" autocomplete="off">' +
         '<label class="lv-input"><span class="sr-only" style="position:absolute;left:-9999px">Message</span><input id="lv-input" type="text" maxlength="90" placeholder="Dis quelque chose…" enterkeyhint="send"></label>' +
-        '<button class="lv-round bag" type="button" data-sheet-open aria-label="Voir les pièces présentées">' + ICON.bag + '<span class="n" id="lv-bagn">5</span></button>' +
         '<button class="lv-round" type="button" data-share aria-label="Partager">' + ICON.share + "</button>" +
         '<button class="lv-round heart" type="button" data-like aria-label="Envoyer des cœurs">' + ICON.heart + "</button>" +
       "</form>" +
-    "</div>" +
-    '<div class="lv-sheet" id="lv-sheet" role="dialog" aria-label="Pièces présentées dans le live"></div>';
+    "</div>";
 
   var el = {
-    chat: $("#lv-chat"), card: $("#lv-card"), sheet: $("#lv-sheet"), hearts: $("#lv-hearts"), gifts: $("#lv-gifts"),
-    cap: $("#lv-cap"), capT: $("#lv-cap-t"), viewers: $("#lv-viewers"), likes: $("#lv-likes"), bag: $("#lv-bagn"), input: $("#lv-input")
+    chat: $("#lv-chat"), card: $("#lv-card"), hearts: $("#lv-hearts"), gifts: $("#lv-gifts"),
+    cap: $("#lv-cap"), capT: $("#lv-cap-t"), viewers: $("#lv-viewers"), likes: $("#lv-likes"), input: $("#lv-input")
   };
-  el.bag.parentNode.style.visibility = "hidden";
 
   /* ---------- Mise à l'échelle (le décor fait 360 × 640) ---------- */
   var phone = $("#lv-phone");
@@ -235,7 +231,7 @@
     })();
   }
 
-  /* ---------- Pièce présentée, carte et liste (tout renvoie vers le site) ---------- */
+  /* ---------- Pièce présentée : simple repère, rien à acheter ici ---------- */
   var garmentEl = $("#lv-garment");
   function sizeWord(p) { return p.size === "Unique" ? "taille unique" : "taille " + p.size; }
   function cap1(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -265,33 +261,15 @@
 
   function renderCard() {
     if (!pinned) { el.card.classList.remove("is-on"); return; }
-    var html = '<button class="pc-main" type="button" data-sheet-open aria-label="Voir les pièces présentées dans le live"><span class="pc-th">' + A.pieceArt(P, "card") + "<em>" + SHOW.length + "</em></span>" +
-      '<span class="pc-tx"><b>N°' + NB + A.pad(N) + " · " + P.name + "</b><span>" + A.eur(P.price) + " · sur le site uniquement</span></span></button>" +
-      '<a class="pc-cta" href="piece.html?p=' + N + '">Voir sur le site</a>';
+    var html = '<span class="pc-th">' + A.pieceArt(P, "card") + "</span>" +
+      '<span class="pc-tx"><b>N°' + NB + A.pad(N) + " · " + P.name + "</b><span>Présentée en ce moment · à retrouver sur le site</span></span>";
     if (el.card.getAttribute("data-sig") !== html) {
       el.card.setAttribute("data-sig", html);
       el.card.innerHTML = html;
     }
     el.card.classList.add("is-on");
   }
-  function renderSheet() {
-    var rows = SHOW.map(function (n, i) {
-      var p = A.byN(n);
-      return '<a class="lv-row' + (i === cur ? " is-now" : "") + '" href="piece.html?p=' + n + '"><span class="ph">' + A.pieceArt(p, "s") + "</span>" +
-        '<span class="tx"><b>N°' + NB + A.pad(n) + " · " + p.name + "</b><span>" + A.eur(p.price) + " · " + sizeWord(p) + (i === cur ? " · en ce moment" : "") + "</span></span><i>Voir</i></a>";
-    }).join("");
-    var html = '<div class="lv-sheet-head"><h2>Pièces présentées (' + SHOW.length + ')</h2><button type="button" data-sheet-close aria-label="Fermer la liste">' + ICON.x + "</button></div>" +
-      '<div class="lv-list">' + rows + "</div>" +
-      '<a class="lv-big" href="index.html#pieces">Voir toute la collection sur le site</a>' +
-      '<p class="lv-hold">Rien ne se commande dans le live. Chaque pièce se réserve sur le site, pendant 10 minutes.</p>';
-    if (el.sheet.getAttribute("data-sig") !== html) {
-      el.sheet.setAttribute("data-sig", html);
-      el.sheet.innerHTML = html;
-    }
-  }
-  function render() { renderCard(); renderSheet(); }
-  function openSheet() { el.sheet.classList.add("is-open"); renderSheet(); }
-  function closeSheet() { el.sheet.classList.remove("is-open"); }
+  function render() { renderCard(); }
 
   /* ---------- Réponses de l'hôte au chat ---------- */
   function reply(text) {
@@ -319,15 +297,12 @@
     pieceLines(A.byN(SHOW[0])).forEach(function (l) { capQueue.push(l); });
     el.chat.innerHTML = ""; el.cap.classList.remove("is-on"); root.classList.remove("is-talking");
     el.card.removeAttribute("data-sig");
-    el.bag.parentNode.style.visibility = "hidden";
-    closeSheet();
     [ "bonsoir !", "coucou depuis Lyon", "ça commence !", "trop hâte de voir la collection" ].forEach(function (m) { viewerMsg(m); });
     sys("Bienvenue dans le live LOOPR. Respecte les autres spectateurs.");
     setTimeout(function () { nextCap(tok); }, 600);
     setTimeout(function () {
       if (tok !== run) return;
       pinned = true;
-      el.bag.parentNode.style.visibility = "visible";
       sys("LOOPR a épinglé le lien du site : la collection n’est disponible que là.");
       render();
       hearts(5);
@@ -349,13 +324,11 @@
   root.addEventListener("click", function (e) {
     var t = e.target.closest("button, #lv-video");
     if (!t) return;
-    if (t.hasAttribute("data-sheet-open")) return openSheet();
-    if (t.hasAttribute("data-sheet-close")) return closeSheet();
     if (t.hasAttribute("data-like")) return hearts(6, 55);
     if (t.hasAttribute("data-share")) return A.toast("Lien du live copié (simulation).");
     if (t.hasAttribute("data-leave")) { window.location.href = "index.html"; return; }
     if (t.id === "lv-follow") { t.classList.toggle("is-on"); t.textContent = t.classList.contains("is-on") ? "Abonné" : "Suivre"; return; }
-    if (t.id === "lv-video") { closeSheet(); hearts(3, 80); }
+    if (t.id === "lv-video") { hearts(3, 80); }
   });
   $("#lv-form").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -365,35 +338,6 @@
     el.input.value = "";
     var tok = run;
     setTimeout(function () { if (tok === run) reply(v); }, rand(1400, 2400));
-  });
-
-  document.querySelector(".regie").addEventListener("click", function (e) {
-    var b = e.target.closest("[data-regie]");
-    if (!b) return;
-    var a = b.getAttribute("data-regie");
-    var tok = run;
-    if (a === "restart") return start();
-    if (a === "reset") {
-      A.store.set("loopr.cart.v1", []); A.store.set(A.KEYS.order, null); A.store.set(A.KEYS.sold, []); A.store.set(A.KEYS.track, 0);
-      window.location.reload();
-      return;
-    }
-    if (a === "burst") {
-      burst = true;
-      sys("Le live s’emballe !");
-      hearts(14, 50);
-      say("Merci à tous, vous êtes de plus en plus nombreux !");
-      setTimeout(function () { if (tok === run) burst = false; }, 15000);
-    }
-    if (a === "next") { if (pinned) nextPiece(); }
-    if (a === "link") {
-      if (!pinned) return;
-      sys("LOOPR rappelle le lien du site.");
-      say("Toute la collection est disponible uniquement sur le site, le lien est épinglé en haut du chat.");
-      viewerMsg("j’y vais !!"); viewerMsg("le lien marche");
-      var pin = $("#lv-pin");
-      pin.classList.remove("is-ping"); void pin.offsetWidth; pin.classList.add("is-ping");
-    }
   });
 
   start();

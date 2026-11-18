@@ -7,6 +7,10 @@
   var ORDER_KEY = "loopr.order.v1";
   var SOLD_KEY = "loopr.sold.v1";
   var TRACK_KEY = "loopr.track.v1";
+  var ACCOUNT_KEY = "loopr.account.v1";
+  var PROMO_KEY = "loopr.promo.v1";
+  var PROMO_PCT = 10;
+  var PROMO_CODE = "BIENVENUE10";
   var HOLD_MS = 10 * 60 * 1000;
   var NB = " ";
 
@@ -97,6 +101,18 @@
   }
   function pieceArt(p, suffix) { return garment(p.type, p.fabric, p.n + (suffix || ""), p.name); }
 
+  /* ---------- Compte d'Océane (sans mot de passe) et code de bienvenue ---------- */
+  var DEFAULT_ACCOUNT = { first: "Océane", email: "oceane@exemple.fr", city: "Lyon", alerts: true };
+  function account() {
+    var a = store.get(ACCOUNT_KEY, null) || {};
+    return { first: a.first || DEFAULT_ACCOUNT.first, email: a.email || DEFAULT_ACCOUNT.email, city: a.city || DEFAULT_ACCOUNT.city, alerts: a.alerts === undefined ? DEFAULT_ACCOUNT.alerts : a.alerts };
+  }
+  function saveAccount(a) { store.set(ACCOUNT_KEY, a); }
+  function promo() { return store.get(PROMO_KEY, null) || {}; }
+  function promoActive() { var p = promo(); return p.state === "claimed" && !p.used; }
+  function cents(x) { return Math.round(x * 100) / 100; }
+  function discountOf(sub) { return promoActive() ? cents(sub * PROMO_PCT / 100) : 0; }
+
   /* ---------- Panier et envies ---------- */
   var toastTimer;
   function toast(msg) {
@@ -143,10 +159,12 @@
     if (!items.length) return false;
     var sub = items.reduce(function (a, p) { return a + p.price; }, 0);
     var ship = sub >= D.freeShippingFrom ? 0 : D.shippingFee;
+    var disc = discountOf(sub);
     store.set(ORDER_KEY, {
       id: "LP-" + D.drop.number + "-" + String(Math.floor(1000 + Math.random() * 9000)),
-      at: Date.now(), method: method, items: items.map(function (p) { return p.n; }), sub: sub, ship: ship, total: sub + ship
+      at: Date.now(), method: method, items: items.map(function (p) { return p.n; }), sub: sub, disc: disc, ship: ship, total: cents(sub - disc + ship)
     });
+    if (disc) { var pr = promo(); pr.used = true; store.set(PROMO_KEY, pr); }
     var sold = store.get(SOLD_KEY, []);
     items.forEach(function (p) { if (sold.indexOf(p.n) < 0) sold.push(p.n); });
     store.set(SOLD_KEY, sold);
@@ -257,10 +275,11 @@
     var head = $("#site-header");
     head.outerHTML =
       '<div class="announce"><div class="wrap"><span>Drop ' + D.drop.number + " en cours : " + avail + " pièces disponibles sur " + D.drop.total +
-      "</span><span>Livraison offerte dès " + D.freeShippingFrom + NB + "€</span></div></div>" +
+      "</span><span id=\"promo-note\"></span><span>Livraison offerte dès " + D.freeShippingFrom + NB + "€</span></div></div>" +
       '<header class="site-header"><div class="wrap">' +
       '<a class="brand" href="index.html" aria-label="LOOPR, accueil">' + LOGO + '<span class="brand-word">LOOPR</span></a>' +
       '<nav class="nav" aria-label="Navigation principale">' + navLinks() + "</nav>" +
+      '<a class="acct-btn" href="compte.html" aria-label="Mon compte"' + (PAGE === "account" ? ' aria-current="page"' : "") + '><span class="acct-av" aria-hidden="true">' + account().first.charAt(0) + '</span><span class="acct-name">Mon compte</span></a>' +
       '<button class="cart-btn" type="button" data-open-cart aria-label="Ouvrir le panier"><span>Panier</span><span class="cart-count" id="cart-count">0</span><span class="cart-clock" id="cart-clock" hidden></span></button>' +
       '</div><div class="stitch"></div><div class="wrap subnav-wrap"><nav class="subnav" aria-label="Navigation principale (mobile)">' + navLinks() + "</nav></div></header>";
 
@@ -270,7 +289,7 @@
       '<div><a class="brand" href="index.html" aria-label="LOOPR, accueil"><span class="brand-word">LOOPR</span></a>' +
       '<p style="margin-top:.75rem;max-width:34ch">LOOPR coud des vêtements existants en pièces uniques. Une pièce, un exemplaire, une seule personne.</p></div>' +
       '<div><h3>Acheter</h3><ul><li><a href="index.html#pieces">Le drop ' + D.drop.number + '</a></li><li><a href="live.html">Live</a></li><li><a href="popup.html">Pop-up</a></li><li><a href="club.html">LOOP Club</a></li></ul></div>' +
-      '<div><h3>Aide</h3><ul><li><a href="suivi.html">Suivre ma commande</a></li><li><a href="#" data-soon>Livraison et retours</a></li><li><a href="suivi.html">Passeport de la pièce</a></li><li><a href="#" data-soon>Contact</a></li></ul></div>' +
+      '<div><h3>Aide</h3><ul><li><a href="compte.html">Mon compte</a></li><li><a href="suivi.html">Suivre ma commande</a></li><li><a href="#" data-soon>Livraison et retours</a></li><li><a href="suivi.html">Passeport de la pièce</a></li><li><a href="#" data-soon>Contact</a></li></ul></div>' +
       '<div><h3>Suivre</h3><ul><li><a href="#" data-soon>TikTok</a></li><li><a href="#" data-soon>Instagram</a></li></ul></div>' +
       '</div><p class="foot-note">Maquette du site LOOPR réalisée pour un cas d’école. Les pièces, prix, dates de pop-up et textes sont des exemples. Les illustrations remplacent les photos.</p></div></footer>';
 
@@ -282,6 +301,7 @@
       '<button class="icon-btn" type="button" data-close aria-label="Fermer">×</button></div>' +
       '<div class="drawer-body" id="drawer-body"></div><div class="drawer-foot" id="drawer-foot"></div></aside>' +
       '<div class="toast" id="toast" role="status" aria-live="polite"></div>' +
+      '<dialog id="promo" aria-labelledby="promo-title"><div id="promo-body"></div></dialog>' +
       '<dialog id="checkout"><form method="dialog"><h2>Paiement simulé</h2><p id="checkout-msg"></p><div class="dlg-btns"><button class="btn" value="ok">Valider la commande simulée</button><button class="btn btn--ghost" value="cancel">Retour au panier</button></div></form></dialog>';
     while (shell.firstChild) document.body.appendChild(shell.firstChild);
   }
@@ -334,14 +354,18 @@
     }).join("");
     var sub = c.reduce(function (a, i) { return a + i.p.price; }, 0);
     var ship = sub >= D.freeShippingFrom ? 0 : D.shippingFee;
+    var disc = discountOf(sub);
+    var promoLine = disc ? '<div class="sum sum--promo"><span>Code ' + PROMO_CODE + " (−" + PROMO_PCT + "" + NB + "%)</span><span>−" + eur(disc) + "</span></div>"
+      : (promo().state === "claimed" ? "" : '<button class="promo-hook" type="button" data-promo-open>−' + PROMO_PCT + NB + "% sur ta première commande : laisse ton e-mail</button>");
     foot.innerHTML =
+      promoLine +
       '<div class="sum"><span>Sous-total</span><span>' + eur(sub) + "</span></div>" +
       '<div class="sum"><span>Livraison</span><span>' + (ship ? eur(ship) : "Offerte") + "</span></div>" +
-      '<div class="sum total"><span>Total</span><span>' + eur(sub + ship) + "</span></div>" +
+      '<div class="sum total"><span>Total</span><span>' + eur(cents(sub - disc + ship)) + "</span></div>" +
       (ship ? "<small>Plus que " + eur(D.freeShippingFrom - sub) + " pour la livraison offerte.</small>" : "") +
       '<div class="express"><button class="pay" type="button" data-checkout="Apple Pay">Apple Pay</button><button class="pay" type="button" data-checkout="Shop Pay">Shop Pay</button><button class="pay pay--alt" type="button" data-checkout="Klarna en 3 fois">Klarna 3x</button></div>' +
       '<button class="btn btn--block" type="button" data-checkout="paiement en invité">Commander sans compte</button>' +
-      '<small>Pas de compte à créer. <button class="linkbtn" type="button" data-soon>J’ai déjà un compte</button></small>';
+      '<small>Pas de compte obligatoire. <a class="linkbtn" href="compte.html">Mon compte (' + account().first + ")</a></small>";
   }
 
   function renderHeaderCart() {
@@ -500,8 +524,62 @@
     $("#popup-pieces").innerHTML = on.map(card).join("");
   }
 
+  /* ---------- Pop-up de bienvenue : -10 % contre une adresse e-mail ---------- */
+  function promoForm() {
+    return '<button class="icon-btn promo-x" type="button" data-promo-close aria-label="Fermer">×</button>' +
+      '<h2 id="promo-title">−' + PROMO_PCT + NB + '% sur ta première commande</h2>' +
+      '<p>Laisse ton adresse e-mail : la réduction s’applique toute seule à ton panier. Tu reçois aussi un message avant chaque drop.</p>' +
+      '<form id="promo-form" class="promo-form"><label class="sr-only" for="promo-mail">Adresse e-mail</label>' +
+      '<input class="input" id="promo-mail" type="email" required placeholder="ton@email.fr" autocomplete="email">' +
+      '<button class="btn" type="submit">Je veux mes −' + PROMO_PCT + NB + '%</button></form>' +
+      '<p class="promo-fine"><button class="linkbtn" type="button" data-promo-close>Non merci, je regarde le drop</button></p>' +
+      '<p class="promo-fine">Une réduction par personne, sur la première commande. Tu peux te désinscrire à tout moment (maquette : aucun e-mail n’est envoyé).</p>';
+  }
+  function promoDone() {
+    var pr = promo();
+    return '<button class="icon-btn promo-x" type="button" data-promo-close aria-label="Fermer">×</button>' +
+      '<h2 id="promo-title">C’est noté, merci !</h2>' +
+      '<p>Ton code <b class="promo-code">' + PROMO_CODE + '</b> est enregistré pour <b>' + (pr.email || "") + '</b>.</p>' +
+      '<p>−' + PROMO_PCT + NB + '% sur ta première commande, appliqué automatiquement dans ton panier.</p>' +
+      '<p><button class="btn" type="button" data-promo-close>Voir les pièces</button></p>';
+  }
+  function openPromo() {
+    var dlg = $("#promo");
+    if (!dlg || dlg.open) return;
+    $("#promo-body").innerHTML = promo().state === "claimed" ? promoDone() : promoForm();
+    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+    var inp = $("#promo-mail");
+    if (inp) inp.focus();
+  }
+  function closePromo() {
+    var dlg = $("#promo");
+    if (!dlg || !dlg.open) return;
+    if (promo().state !== "claimed") store.set(PROMO_KEY, { state: "dismissed" });
+    if (dlg.close) dlg.close(); else dlg.removeAttribute("open");
+    refreshAll();
+  }
+  function claimPromo(email) {
+    store.set(PROMO_KEY, { state: "claimed", email: email, used: false, at: Date.now() });
+    var a = account(); a.email = email; saveAccount(a);
+    $("#promo-body").innerHTML = promoDone();
+    refreshAll();
+  }
+  function renderPromoNote() {
+    var n = $("#promo-note");
+    if (!n) return;
+    var pr = promo();
+    if (pr.state === "claimed" && !pr.used) n.innerHTML = "Code " + PROMO_CODE + " actif : −" + PROMO_PCT + NB + "% sur ta première commande";
+    else if (pr.state === "claimed") n.textContent = "";
+    else n.innerHTML = '<button class="announce-link" type="button" data-promo-open>−' + PROMO_PCT + NB + "% sur ta première commande</button>";
+  }
+  function resetDemo() {
+    store.set(CART_KEY, []); store.set(ORDER_KEY, null); store.set(SOLD_KEY, []); store.set(TRACK_KEY, 0);
+    store.set(PROMO_KEY, null); store.set(ACCOUNT_KEY, null);
+  }
+
   function refreshAll() {
     renderHeaderCart();
+    renderPromoNote();
     renderDrawer();
     if (PAGE === "home") renderHome();
     if (PAGE === "piece") renderPiece();
@@ -517,6 +595,8 @@
     if (t.hasAttribute("data-reserve")) return reserve(Number(t.getAttribute("data-reserve")));
     if (t.hasAttribute("data-heart")) { e.preventDefault(); return toggleWish(Number(t.getAttribute("data-heart"))); }
     if (t.hasAttribute("data-open-cart")) return openDrawer("cart");
+    if (t.hasAttribute("data-promo-open")) { closeDrawer(); return openPromo(); }
+    if (t.hasAttribute("data-promo-close")) return closePromo();
     if (t.hasAttribute("data-remove")) return removeFromCart(Number(t.getAttribute("data-remove")));
     if (t.hasAttribute("data-close") || t.hasAttribute("data-close-link")) return closeDrawer();
     if (t.hasAttribute("data-tab")) { drawerTab = t.getAttribute("data-tab"); return renderDrawer(); }
@@ -533,6 +613,12 @@
   document.addEventListener("click", function (e) { if (e.target && e.target.id === "scrim") closeDrawer(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDrawer(); });
   document.addEventListener("submit", function (e) {
+    if (e.target.id === "promo-form") {
+      e.preventDefault();
+      var v = $("#promo-mail").value.trim();
+      if (v) claimPromo(v);
+      return;
+    }
     var f = e.target.closest("form[data-toast]");
     if (!f) return;
     e.preventDefault();
@@ -541,7 +627,7 @@
   });
 
   /* ---------- Démarrage ---------- */
-  window.LOOPR_APP = { store: store, KEYS: { order: ORDER_KEY, sold: SOLD_KEY, track: TRACK_KEY }, isSold: isSold, byN: byN, pad: pad, eur: eur, mmss: mmss, pieceArt: pieceArt, reserve: reserve, inCart: inCart, holdOf: holdOf, toast: toast, openDrawer: openDrawer };
+  window.LOOPR_APP = { store: store, KEYS: { order: ORDER_KEY, sold: SOLD_KEY, track: TRACK_KEY, account: ACCOUNT_KEY, promo: PROMO_KEY }, account: account, saveAccount: saveAccount, promo: promo, promoActive: promoActive, PROMO_CODE: PROMO_CODE, PROMO_PCT: PROMO_PCT, resetDemo: resetDemo, refresh: refreshAll, isSold: isSold, byN: byN, pad: pad, eur: eur, mmss: mmss, pieceArt: pieceArt, reserve: reserve, inCart: inCart, holdOf: holdOf, toast: toast, openDrawer: openDrawer };
   buildChrome();
   $("#checkout").addEventListener("close", function () {
     if ($("#checkout").returnValue === "ok" && pendingMethod && placeOrder(pendingMethod)) window.location.href = "commande.html";
@@ -553,4 +639,7 @@
   tickCountdowns();
   tickHolds();
   setInterval(function () { tickCountdowns(); tickHolds(); }, 1000);
+  $("#promo").addEventListener("click", function (e) { if (e.target === this) closePromo(); });
+  $("#promo").addEventListener("cancel", function () { if (promo().state !== "claimed") store.set(PROMO_KEY, { state: "dismissed" }); });
+  if (PAGE === "home" && !promo().state) setTimeout(openPromo, 2500);
 })();

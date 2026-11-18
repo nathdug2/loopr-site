@@ -32,8 +32,8 @@
   function renderOrder() {
     var saved = A.store.get(A.KEYS.order, null);
     if (!saved) {
-      root.innerHTML = '<div class="ord-empty"><h1 class="ord-title">Pas encore de commande</h1><p>Aucune commande n’a été passée dans ce navigateur. Réserve la pièce du live, ouvre le panier, puis valide la commande.</p>' +
-        '<div class="ord-actions"><a class="btn btn--indigo" href="live.html">Aller au live</a><a class="btn btn--ghost" href="index.html#pieces">Voir le drop</a></div></div>';
+      root.innerHTML = '<div class="ord-empty"><h1 class="ord-title">Pas encore de commande</h1><p>Aucune commande n’a été passée dans ce navigateur. Réserve une pièce du drop, ouvre le panier, puis valide la commande.</p>' +
+        '<div class="ord-actions"><a class="btn btn--indigo" href="index.html#pieces">Voir le drop</a><a class="btn btn--ghost" href="live.html">Aller au live</a></div></div>';
       return;
     }
     var o = saved;
@@ -47,7 +47,7 @@
       items.map(function (p) {
         return '<div class="ord-line">' + ph(p, "o") + '<div><div class="ord-name">N°' + NB + A.pad(p.n) + ", " + p.name + "</div><div>Taille " + p.size + '</div></div><div class="ord-name">' + A.eur(p.price) + "</div></div>";
       }).join("") +
-      '<div class="ord-sums"><div><span>Sous-total</span><span>' + A.eur(o.sub) + "</span></div><div><span>Livraison</span><span>" + (o.ship ? A.eur(o.ship) : "Offerte") + '</span></div><div class="total"><span>Total</span><span>' + A.eur(o.total) + "</span></div></div>" +
+      '<div class="ord-sums"><div><span>Sous-total</span><span>' + A.eur(o.sub) + "</span></div>" + (o.disc ? "<div><span>Code " + A.PROMO_CODE + " (−" + A.PROMO_PCT + NB + "%)</span><span>−" + A.eur(o.disc) + "</span></div>" : "") + "<div><span>Livraison</span><span>" + (o.ship ? A.eur(o.ship) : "Offerte") + '</span></div><div class="total"><span>Total</span><span>' + A.eur(o.total) + "</span></div></div>" +
       '<p class="ord-meta">Livraison estimée : ' + day(o.at, 3) + " (exemple).</p></article>" +
       '<div class="ord-side">' +
       '<section class="ord-next"><h2>Suivre ta commande</h2><p>Voir où en est ton colis et ouvrir le passeport de ta pièce à la réception.</p><a class="btn btn--indigo" href="suivi.html">Suivre ma commande</a></section>' +
@@ -95,9 +95,7 @@
       '<div class="pass-care"><b>Pour la garder longtemps (exemple)</b>Lavage à 30 °C, retournée. Séchage à plat.</div>' +
       '<div class="ord-actions" style="margin-top:1.25rem"><a class="btn btn--indigo" href="club.html">Voir mon niveau LOOP Club</a><a class="btn btn--ghost" href="index.html#next-title">Prochain drop</a></div></div></section>';
   }
-  function resetDemo() {
-    A.store.set("loopr.cart.v1", []); A.store.set(A.KEYS.order, null); A.store.set(A.KEYS.sold, []); A.store.set(A.KEYS.track, 0);
-  }
+  function resetDemo() { A.resetDemo(); }
 
   /* ---------- Club : niveau Loop après un achat ---------- */
   function renderClub() {
@@ -113,7 +111,7 @@
     if (t.hasAttribute("data-track-next")) { A.store.set(A.KEYS.track, Math.min(3, (Number(A.store.get(A.KEYS.track, 0)) || 0) + 1)); scanned = false; return renderTrack(); }
     if (t.hasAttribute("data-track-reset")) { A.store.set(A.KEYS.track, 0); scanned = false; return renderTrack(); }
     if (t.hasAttribute("data-scan")) { scanned = true; return renderTrack(); }
-    if (t.hasAttribute("data-demo-reset")) { resetDemo(); scanned = false; A.toast("Démo remise à zéro : la pièce n° 08 est de nouveau en vente."); return renderTrack(); }
+    if (t.hasAttribute("data-demo-reset")) { resetDemo(); scanned = false; A.toast("Démo remise à zéro : la pièce n° 08 est de nouveau en vente, le code de bienvenue aussi."); return renderTrack(); }
   });
 
   if (PAGE === "order") renderOrder();
