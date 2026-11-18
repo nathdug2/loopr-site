@@ -125,7 +125,9 @@
 
   function reserve(n) {
     var p = byN(n);
-    if (!p || p.status !== "dispo" || inCart(n)) return;
+    if (!p || inCart(n)) return;
+    /* Une pièce « tiktok » est réservée aux spectateurs : elle ne se réserve que depuis la page du live. */
+    if (p.status !== "dispo" && !(p.status === "tiktok" && window.LOOPR_LIVE_ON)) return;
     var c = readCart();
     c.push({ n: n, until: Date.now() + HOLD_MS });
     store.set(CART_KEY, c);
@@ -222,6 +224,7 @@
   function navLinks(cls) {
     var items = [
       ["index.html#pieces", "Le drop", PAGE === "home" || PAGE === "piece"],
+      ["live.html", "Live", PAGE === "live"],
       ["popup.html", "Pop-up", PAGE === "popup"],
       ["club.html", "LOOP Club", PAGE === "club"]
     ];
@@ -247,7 +250,7 @@
       '<footer class="site-footer"><div class="wrap"><div class="foot-grid">' +
       '<div><a class="brand" href="index.html" aria-label="LOOPR, accueil"><span class="brand-word">LOOPR</span></a>' +
       '<p style="margin-top:.75rem;max-width:34ch">LOOPR coud des vêtements existants en pièces uniques. Une pièce, un exemplaire, une seule personne.</p></div>' +
-      '<div><h3>Acheter</h3><ul><li><a href="index.html#pieces">Le drop ' + D.drop.number + '</a></li><li><a href="popup.html">Pop-up</a></li><li><a href="club.html">LOOP Club</a></li></ul></div>' +
+      '<div><h3>Acheter</h3><ul><li><a href="index.html#pieces">Le drop ' + D.drop.number + '</a></li><li><a href="live.html">Live</a></li><li><a href="popup.html">Pop-up</a></li><li><a href="club.html">LOOP Club</a></li></ul></div>' +
       '<div><h3>Aide</h3><ul><li><a href="#" data-soon>Livraison et retours</a></li><li><a href="#" data-soon>Passeport de la pièce</a></li><li><a href="#" data-soon>Contact</a></li></ul></div>' +
       '<div><h3>Suivre</h3><ul><li><a href="#" data-soon>TikTok</a></li><li><a href="#" data-soon>Instagram</a></li></ul></div>' +
       '</div><p class="foot-note">Maquette du site LOOPR réalisée pour un cas d’école. Les pièces, prix, dates de pop-up et textes sont des exemples. Les illustrations remplacent les photos.</p></div></footer>';
@@ -488,6 +491,7 @@
     if (PAGE === "home") renderHome();
     if (PAGE === "piece") renderPiece();
     if (PAGE === "popup") renderPopup();
+    document.dispatchEvent(new CustomEvent("loopr:refresh"));
   }
 
   /* ---------- Événements ---------- */
@@ -520,6 +524,7 @@
   });
 
   /* ---------- Démarrage ---------- */
+  window.LOOPR_APP = { byN: byN, pad: pad, eur: eur, mmss: mmss, pieceArt: pieceArt, reserve: reserve, inCart: inCart, holdOf: holdOf, toast: toast, openDrawer: openDrawer };
   buildChrome();
   buildChips();
   renderHomeExtras();

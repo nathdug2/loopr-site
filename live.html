@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live | LOOPR</title>
+  <meta name="description" content="Le live LOOPR : une pièce unique présentée en direct, à réserver 10 minutes depuis le chat.">
+  <meta name="theme-color" content="#1b2459">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-sans-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/live.css">
+</head>
+<body data-page="live">
+  <div id="site-header"></div>
+
+  <main class="live-page">
+    <div class="wrap live-layout">
+      <div class="live-stage-col">
+        <div class="lv-phone" id="lv-phone">
+          <div class="lv-stage" id="live-root" aria-label="Live LOOPR, simulation">
+            <noscript><p class="lv-noscript">Le live est simulé avec JavaScript. Active-le pour le voir.</p></noscript>
+          </div>
+        </div>
+      </div>
+
+      <aside class="regie" aria-labelledby="regie-title">
+        <h1 class="regie-title" id="regie-title">Live LOOPR</h1>
+        <p class="regie-lead">Le live est simulé : le chat, les cœurs et le nombre de spectateurs sont fictifs. La réservation, elle, est réelle. Elle garde la pièce n° 08 dans ton panier pendant 10 minutes.</p>
+        <div class="regie-box">
+          <h2>Régie de démonstration</h2>
+          <div class="regie-btns">
+            <button class="btn btn--ghost" type="button" data-regie="burst">Faire monter l’ambiance</button>
+            <button class="btn btn--ghost" type="button" data-regie="last">Lancer le dernier appel</button>
+            <button class="btn btn--ghost" type="button" data-regie="other" id="regie-other">Un spectateur réserve la pièce</button>
+            <button class="btn btn--ghost" type="button" data-regie="restart">Relancer le live</button>
+          </div>
+          <p class="regie-note">Tape un message dans le chat : l’hôte répond aux mots « taille », « prix », « livraison », « matière » ou « réserver ».</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/live.js"></script>
+</body>
+</html>

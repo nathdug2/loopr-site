@@ -1,0 +1,217 @@
+/* LOOPR — page Live (simulation d'un live TikTok). Le décor est dessiné à 360 × 640 puis mis à l'échelle par live.js. */
+
+.live-page { background: #0c0f1f; color: #fff; padding-block: 24px 40px; min-height: calc(100vh - 120px); }
+.live-layout { display: grid; gap: 28px; justify-items: center; align-items: start; }
+.live-stage-col { display: flex; justify-content: center; width: 100%; }
+
+.lv-phone { position: relative; width: 360px; height: 640px; flex: none; }
+.lv-stage {
+  position: absolute; left: 0; top: 0; width: 360px; height: 640px; transform-origin: 0 0;
+  border-radius: 30px; overflow: hidden; background: #1a2250; isolation: isolate;
+  box-shadow: 0 0 0 5px #1a1e33, 0 28px 70px rgba(0, 0, 0, 0.55);
+  font-family: var(--body); font-size: 13px; line-height: 1.3; color: #fff; user-select: none;
+}
+.lv-stage button { font: inherit; color: inherit; cursor: pointer; }
+.lv-stage :focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+/* ---------- Image « vidéo » ---------- */
+.lv-video { position: absolute; inset: 0; overflow: hidden; cursor: pointer; }
+.lv-wall {
+  position: absolute; inset: -6% -6% 0;
+  background:
+    linear-gradient(180deg, rgba(10, 14, 40, 0.1) 0%, rgba(10, 14, 40, 0.55) 100%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 7px),
+    linear-gradient(120deg, #2f3d86, #3b5088 55%, #26356f);
+  animation: lv-drift 18s ease-in-out infinite alternate;
+}
+.lv-wall::before, .lv-wall::after { content: ""; position: absolute; border: 2px dashed rgba(242, 167, 27, 0.5); }
+.lv-wall::before { left: 8%; top: 20%; width: 34%; height: 17%; background: rgba(92, 115, 179, 0.5); }
+.lv-wall::after { right: 6%; top: 27%; width: 28%; height: 21%; background: rgba(38, 53, 111, 0.65); }
+.lv-sign {
+  position: absolute; left: 22px; top: 118px; display: flex; align-items: center; gap: 8px;
+  font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: 0.04em; color: var(--amber);
+  text-shadow: 0 0 14px rgba(242, 167, 27, 0.7);
+}
+.lv-sign i { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--amber); box-shadow: 0 0 10px rgba(242, 167, 27, 0.7); }
+.lv-rail { position: absolute; left: 0; right: 0; top: 188px; height: 90px; opacity: 0.5; filter: blur(1.4px); }
+.lv-rail .bar { position: absolute; left: -10px; right: -10px; top: 4px; height: 3px; background: #c9cfe6; }
+.lv-rail .g { position: absolute; top: 6px; width: 64px; }
+.lv-rail .g svg { display: block; width: 100%; height: auto; }
+.lv-host { position: absolute; left: 10px; bottom: -8px; width: 300px; }
+.lv-host svg { display: block; width: 100%; height: auto; overflow: visible; }
+.lv-garment {
+  position: absolute; left: 192px; top: 262px; width: 168px; transform-origin: 50% 0;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); animation: lv-sway 5.5s ease-in-out infinite;
+}
+.lv-garment svg { display: block; width: 100%; height: auto; }
+.lv-grain { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.35)); }
+.lv-shade-t { position: absolute; left: 0; right: 0; top: 0; height: 150px; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, 0.5), transparent); }
+.lv-shade-b { position: absolute; left: 0; right: 0; bottom: 0; height: 330px; pointer-events: none; background: linear-gradient(transparent, rgba(0, 0, 0, 0.68)); }
+
+.lv-eye { transform-box: fill-box; transform-origin: center; animation: lv-blink 5s infinite; }
+.lv-mouth { transform-box: fill-box; transform-origin: center; transform: scaleY(0.25); }
+.lv-stage.is-talking .lv-mouth { animation: lv-talk 0.32s ease-in-out infinite alternate; }
+
+@keyframes lv-drift { from { transform: scale(1) translateX(0); } to { transform: scale(1.06) translateX(-8px); } }
+@keyframes lv-sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes lv-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+@keyframes lv-talk { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+
+/* ---------- Haut : hôte, spectateurs ---------- */
+.lv-top { position: absolute; left: 10px; right: 10px; top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lv-host-pill { display: flex; align-items: center; gap: 7px; padding: 3px 4px 3px 3px; border-radius: 99px; background: rgba(0, 0, 0, 0.42); }
+.lv-av { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--label); }
+.lv-av svg { width: 24px; height: 24px; }
+.lv-host-pill b { display: block; font-size: 12px; font-weight: 700; }
+.lv-host-pill small { display: block; font-size: 10px; opacity: 0.85; }
+.lv-follow { padding: 6px 11px; border: 0; border-radius: 99px; background: #fe2c55; font-size: 12px; font-weight: 700; }
+.lv-follow.is-on { background: rgba(255, 255, 255, 0.22); }
+.lv-right { display: flex; align-items: center; gap: 6px; }
+.lv-viewers { display: flex; align-items: center; gap: 5px; padding: 4px 9px 4px 4px; border-radius: 99px; background: rgba(0, 0, 0, 0.42); font-weight: 700; font-size: 12px; }
+.lv-faces { display: flex; }
+.lv-faces i { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #222; margin-left: -6px; }
+.lv-faces i:first-child { margin-left: 0; }
+.lv-x { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; background: transparent; opacity: 0.9; }
+.lv-tags { position: absolute; left: 12px; top: 56px; display: flex; align-items: center; gap: 6px; }
+.lv-live { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 5px; background: #fe2c55; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; }
+.lv-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: lv-pulse 1.4s ease-in-out infinite; }
+.lv-tag { padding: 2px 8px; border-radius: 5px; background: rgba(0, 0, 0, 0.42); font-size: 11px; font-weight: 600; }
+@keyframes lv-pulse { 50% { opacity: 0.25; } }
+
+/* ---------- Sous-titres, cadeaux ---------- */
+.lv-cap {
+  position: absolute; left: 24px; right: 24px; top: 286px; display: flex; justify-content: center; pointer-events: none;
+}
+.lv-cap span {
+  max-width: 100%; padding: 5px 10px; border-radius: 6px; background: rgba(0, 0, 0, 0.62); text-align: center; font-size: 13px; font-weight: 600;
+  opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.lv-cap.is-on span { opacity: 1; transform: none; }
+.lv-gifts { position: absolute; left: 10px; top: 92px; display: grid; gap: 6px; pointer-events: none; }
+.lv-gift { display: flex; align-items: center; gap: 7px; padding: 4px 12px 4px 4px; border-radius: 99px; background: linear-gradient(90deg, rgba(254, 44, 85, 0.85), rgba(254, 44, 85, 0.15)); animation: lv-gift-in 0.4s ease-out both; }
+.lv-gift .lv-gift-av { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-weight: 700; font-size: 12px; }
+.lv-gift b { display: block; font-size: 11px; line-height: 1.1; }
+.lv-gift small { display: block; font-size: 10px; opacity: 0.9; }
+.lv-gift.is-out { animation: lv-gift-out 0.4s ease-in both; }
+@keyframes lv-gift-in { from { transform: translateX(-120%); opacity: 0; } }
+@keyframes lv-gift-out { to { transform: translateX(-120%); opacity: 0; } }
+
+/* ---------- Bas : chat, carte produit, barre ---------- */
+.lv-bottom { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 10px 12px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.lv-bottom > * { pointer-events: auto; }
+.lv-chat {
+  list-style: none; margin: 0; padding: 0; width: 268px; height: 168px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent, #000 38%); mask-image: linear-gradient(transparent, #000 38%); pointer-events: none;
+}
+.lv-chat li { display: flex; gap: 6px; align-items: flex-start; margin-top: 5px; animation: lv-msg-in 0.28s ease-out both; }
+.lv-chat .av { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10px; font-weight: 700; color: #1b2459; }
+.lv-chat .t { display: inline-block; padding: 3px 9px 4px; border-radius: 12px; background: rgba(0, 0, 0, 0.32); font-size: 12.5px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); overflow-wrap: anywhere; }
+.lv-chat .t b { margin-right: 4px; font-weight: 600; color: rgba(255, 255, 255, 0.72); }
+.lv-chat .sys .t { background: rgba(0, 0, 0, 0.5); font-weight: 600; color: #ffd36b; }
+.lv-chat .sys .av { display: none; }
+.lv-chat .me .t { background: rgba(242, 167, 27, 0.9); color: #1b2459; text-shadow: none; }
+.lv-chat .me .t b { color: #1b2459; }
+.lv-chat .host .t { background: rgba(47, 61, 134, 0.92); }
+.lv-chat .host .t b { color: #fff; }
+.lv-chat .badge { display: inline-block; margin-right: 4px; padding: 0 5px; border-radius: 4px; background: var(--amber); color: #1b2459; font-size: 10px; font-weight: 700; vertical-align: 1px; }
+@keyframes lv-msg-in { from { opacity: 0; transform: translateY(8px); } }
+
+.lv-card {
+  display: none; align-items: stretch; width: 268px; border-radius: 12px; background: rgba(255, 255, 255, 0.96); color: var(--indigo); overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.lv-card.is-on { display: flex; animation: lv-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+@keyframes lv-pop { from { transform: translateY(14px) scale(0.92); opacity: 0; } }
+.lv-card .pc-main { display: flex; flex: 1; min-width: 0; align-items: center; gap: 8px; padding: 6px 4px 6px 6px; border: 0; background: transparent; text-align: left; color: var(--indigo); }
+.lv-card .pc-th { flex: none; width: 44px; height: 44px; border-radius: 8px; background: var(--wash-deep); padding: 3px; position: relative; }
+.lv-card .pc-th svg { display: block; width: 100%; height: 100%; }
+.lv-card .pc-th em { position: absolute; left: -2px; top: -2px; min-width: 16px; padding: 0 4px; border-radius: 8px; background: #fe2c55; color: #fff; font-style: normal; font-weight: 700; font-size: 10px; text-align: center; }
+.lv-card .pc-tx { min-width: 0; }
+.lv-card .pc-tx b { display: block; font-size: 12px; font-weight: 700; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-card .pc-tx span { display: block; margin-top: 2px; font-size: 11px; color: rgba(27, 36, 89, 0.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv-card .pc-tx .alert { color: #c73b2e; font-weight: 700; animation: lv-pulse 1.2s ease-in-out infinite; }
+.lv-card .pc-cta { flex: none; align-self: center; margin: 0 6px; padding: 8px 11px; border: 2px solid var(--indigo); border-radius: 8px; background: var(--amber); color: var(--indigo); font-size: 12px; font-weight: 700; }
+.lv-card .pc-cta[disabled] { background: #e3e6ef; color: rgba(27, 36, 89, 0.55); border-color: rgba(27, 36, 89, 0.25); cursor: not-allowed; }
+.lv-card .pc-cta.is-mine { background: var(--indigo); color: #fff; }
+
+.lv-bar { display: flex; align-items: center; gap: 8px; }
+.lv-input { flex: 1; min-width: 0; display: flex; }
+.lv-input input {
+  width: 100%; height: 36px; padding: 0 14px; border: 0; border-radius: 99px; background: rgba(255, 255, 255, 0.2); color: #fff; font: inherit; font-size: 13px;
+}
+.lv-input input::placeholder { color: rgba(255, 255, 255, 0.8); }
+.lv-round { position: relative; flex: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.2); }
+.lv-round svg { width: 20px; height: 20px; }
+.lv-round.bag { background: #ffc233; color: #1b2459; }
+.lv-round.bag .n { position: absolute; right: -3px; top: -3px; min-width: 16px; padding: 0 4px; border-radius: 8px; background: #fe2c55; color: #fff; font-size: 10px; font-weight: 700; line-height: 16px; }
+.lv-round.heart { background: transparent; }
+.lv-round.heart svg { width: 30px; height: 30px; fill: #fe2c55; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)); }
+.lv-round.heart:active { transform: scale(0.88); }
+
+/* ---------- Cœurs qui montent ---------- */
+.lv-hearts { position: absolute; right: 8px; bottom: 56px; width: 70px; height: 300px; pointer-events: none; }
+.lv-hearts .h { position: absolute; bottom: 0; right: 14px; width: 26px; height: 26px; opacity: 0; animation: lv-float 2.8s ease-out forwards; }
+.lv-hearts .h svg { width: 100%; height: 100%; }
+@keyframes lv-float {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--dx, 0px), -280px) scale(1.15) rotate(var(--rot, 0deg)); opacity: 0; }
+}
+
+/* ---------- Fiche produit (tiroir du live) ---------- */
+.lv-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; padding: 14px 14px 16px; border-radius: 18px 18px 0 0; background: var(--label); color: var(--indigo);
+  transform: translateY(105%); transition: transform 0.3s ease; max-height: 78%; overflow: auto;
+}
+.lv-sheet.is-open { transform: none; }
+.lv-sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.lv-sheet-head h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 17px; }
+.lv-sheet-head button { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--wash); color: var(--indigo); }
+.lv-prod { display: flex; gap: 12px; }
+.lv-prod .ph { flex: none; width: 96px; height: 112px; border-radius: 10px; background: var(--wash-deep); padding: 6px; }
+.lv-prod .ph svg { display: block; width: 100%; height: 100%; }
+.lv-prod h3 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 16px; line-height: 1.2; }
+.lv-prod .pr { margin-top: 4px; font-size: 18px; font-weight: 700; }
+.lv-prod .pr small { font-size: 11px; font-weight: 500; color: rgba(27, 36, 89, 0.7); }
+.lv-prod p { margin: 4px 0 0; font-size: 12px; color: rgba(27, 36, 89, 0.82); }
+.lv-passport { margin: 12px 0; padding: 9px 11px; border: 1.5px dashed rgba(27, 36, 89, 0.4); border-radius: 10px; font-size: 12px; }
+.lv-passport b { display: block; margin-bottom: 2px; }
+.lv-sheet .lv-big {
+  display: block; width: 100%; padding: 12px; border: 2px solid var(--indigo); border-radius: 10px; background: var(--amber); box-shadow: 3px 3px 0 var(--indigo);
+  color: var(--indigo); font-size: 14px; font-weight: 700; text-align: center;
+}
+.lv-sheet .lv-big[disabled] { background: #e3e6ef; box-shadow: none; color: rgba(27, 36, 89, 0.55); cursor: not-allowed; }
+.lv-sheet .lv-big.is-mine { background: var(--indigo); color: #fff; box-shadow: 3px 3px 0 var(--amber); }
+.lv-sheet .lv-hold { margin: 8px 0 0; font-size: 12px; text-align: center; color: rgba(27, 36, 89, 0.82); }
+.lv-sheet .lv-hold a { color: var(--indigo); font-weight: 600; }
+
+/* ---------- Régie ---------- */
+.regie { width: 100%; max-width: 360px; color: #fff; }
+.regie-title { margin: 0; font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1; }
+.regie-lead { margin: 0.75rem 0 1.25rem; color: rgba(255, 255, 255, 0.82); }
+.regie-box { padding: 16px; border: 1.5px dashed rgba(242, 167, 27, 0.7); border-radius: 12px; }
+.regie-box h2 { margin: 0 0 12px; font-family: var(--display); font-weight: 700; font-size: 1.0625rem; color: var(--amber); }
+.regie-btns { display: grid; gap: 8px; }
+.regie-btns .btn { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.7); box-shadow: none; justify-content: center; }
+.regie-btns .btn:hover { background: rgba(255, 255, 255, 0.1); box-shadow: none; transform: none; }
+.regie-btns .btn[disabled] { opacity: 0.45; }
+.regie-note { margin: 12px 0 0; font-size: 0.875rem; color: rgba(255, 255, 255, 0.75); }
+
+.live-page .lv-noscript { padding: 24px; }
+
+@media (min-width: 900px) {
+  .live-layout { grid-template-columns: auto minmax(0, 360px); justify-content: center; gap: 56px; padding-top: 8px; }
+  .regie { align-self: center; }
+}
+
+.nav a[href="live.html"]::after, .subnav a[href="live.html"]::after {
+  content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: #fe2c55; vertical-align: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lv-wall, .lv-garment, .lv-eye, .lv-live::before, .lv-card .pc-tx .alert { animation: none; }
+  .lv-stage.is-talking .lv-mouth { animation: none; transform: scaleY(0.6); }
+  .lv-hearts .h { animation-duration: 1.2s; --dx: 0px; --rot: 0deg; }
+  .lv-chat li, .lv-card.is-on, .lv-gift { animation: none; }
+  .lv-sheet { transition: none; }
+}
