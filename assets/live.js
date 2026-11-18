@@ -75,6 +75,7 @@
     '<div class="lv-cap" id="lv-cap" aria-hidden="true"><span id="lv-cap-t"></span></div>' +
     '<div class="lv-hearts" id="lv-hearts"></div>' +
     '<div class="lv-bottom">' +
+      '<a class="lv-pin" href="index.html" id="lv-pin"><span class="lv-pin-tag">Épinglé</span><span class="lv-pin-tx"><b>LOOPR</b> Le drop 14 est sur le site : <u>voir le site LOOPR</u></span></a>' +
       '<ul class="lv-chat" id="lv-chat"></ul>' +
       '<div class="lv-card" id="lv-card"></div>' +
       '<form class="lv-bar" id="lv-form" autocomplete="off">' +
